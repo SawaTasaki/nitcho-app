@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Header } from "./Header";
 import { MainView } from "./MainView";
-import { MainViewMode } from "../types/pagesUnion";
+import { MainViewMode } from "../types/pagesEnum";
 
 export function AppContainer() {
   const [mode, setMode] = useState<MainViewMode | null>(null);
@@ -13,8 +13,8 @@ export function AppContainer() {
       <div className="app-container__main">
         <MainView
           mode={mode}
-          onRequestCreate={() => setMode("create")}
-          onRequestUpdate={() => setMode("update")}
+          onRequestCreate={() => setMode(MainViewMode.Create)}
+          onRequestUpdate={() => setMode(MainViewMode.Update)}
         />
       </div>
     </div>
