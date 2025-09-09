@@ -29,6 +29,10 @@
     --radius-card: 14px;
     --radius-input: 10px;
     --radius-btn: 14px;
+
+    --hour-height: 56px;
+    --thead-height: 32px;
+    --grid-border-top: 1px;
   }
   
   /* ========== Base reset (軽め) ========== */
@@ -322,3 +326,114 @@
     .calendar__actions { gap: 14px; }
   }
   
+  .update-calendar {
+  width: 100%;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.update-calendar__day-block {
+  position: relative;
+  margin-bottom: var(--hour-height);
+}
+
+.update-calendar__date-label {
+  font-weight: bold;
+  text-align: center;
+}
+
+.update-calendar__time-labels {
+  position: absolute;
+  top: calc(var(--thead-height) + var(--grid-border-top));
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: white;
+}
+
+.update-calendar__time-label {
+  height: var(--hour-height);
+}
+
+.update-calendar__table-container {
+  overflow-x: auto;
+  margin-left: var(--hour-height);
+  border-top: 1px solid #000;
+}
+
+.update-calendar__table-wrapper {
+  position: relative; /* オーバーレイの基準 */
+}
+
+.update-calendar__day-table {
+  border-collapse: collapse;
+  position: relative;
+}
+
+.update-calendar__day-table th,
+.update-calendar__day-table td {
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  height: calc(var(--hour-height) / 4);
+  text-align: center;
+  min-width: 100px;
+  position: relative;
+}
+
+.update-calendar__row--hour-line td {
+  border-top: 1px solid #000;
+}
+
+.update-calendar__row--half-hour-line td::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.update-calendar__overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 255, 0.5);
+  pointer-events: auto;
+  border-radius: 10px;
+}
+
+.update-calendar__day-table thead th {
+  font-weight: bold;
+}
+
+.update-calendar__overlay--no-pe {
+  pointer-events: none !important;
+}
+
+.update-calendar__name-input-block {
+  margin: 16px 0;
+  display: flex;
+  gap: 8px;
+  justify-content: center; /* 中央寄せにしたい場合 */
+}
+
+.update-calendar__name-input {
+  font-size: 16px;    /* 文字を大きめに */
+  padding: 8px 12px;  /* 内側余白を増やす */
+  border: 2px solid #007bff;
+  border-radius: 6px;
+  min-width: 200px;   /* 存在感アップ */
+}
+
+.update-calendar__name-input:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 4px rgba(0, 91, 187, 0.5);
+}
+
+.update-calendar__row--last-row td {
+  border-left: none;
+  border-right: none;
+}

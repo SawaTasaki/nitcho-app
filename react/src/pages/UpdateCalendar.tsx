@@ -9,122 +9,6 @@ type PendingOverlay = {
   end: string;
 };
 
-// ===== スタイルを外に定義 =====
-const scheduleGridStyles = `
-  .schedule-grid-wrapper {
-    width: 100%;
-    max-width: 90%;
-    display: flex;
-  flex-direction: column;
-  align-items: center;
-  }
-
-  .day-block {
-    position: relative;
-    margin-bottom: 40px;
-  }
-
-  .date-label {
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-
-  .time-labels {
-    position: absolute;
-    left: 0;
-    top: 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background: white;
-  }
-
-  .time-label {
-    height: 57px;
-  }
-
-  .table-container {
-    overflow-x: auto;
-    margin-left: 48px;
-    border-top: 1px solid #000;
-  }
-
-  .table-wrapper {
-    position: relative; /* オーバーレイの基準 */
-  }
-
-  table {
-    border-collapse: collapse;
-    position: relative;
-  }
-
-  th,
-  td {
-    border-left: 1px solid #000;
-    border-right: 1px solid #000;
-    height: 12px;
-    text-align: center;
-    min-width: 100px;
-    position: relative;
-  }
-
-  .hour-line td {
-    border-top: 1px solid #000;
-  }
-
-  .half-hour-line td::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
-    pointer-events: none;
-  }
-
-  .overlay {
-    position: absolute;
-    background-color: rgba(0, 0, 255, 0.5);
-    pointer-events: auto;
-    border-radius: 10px;
-  }
-
-  thead th {
-    font-weight: bold;
-  }
-
-  .no-pe { pointer-events: none !important; }
-
-  .name-input-block {
-  margin: 16px 0;
-  display: flex;
-  gap: 8px;
-  justify-content: center; /* 中央寄せにしたい場合 */
-}
-
-.name-input {
-  font-size: 16px;    /* 文字を大きめに */
-  padding: 8px 12px;  /* 内側余白を増やす */
-  border: 2px solid #007bff;
-  border-radius: 6px;
-  min-width: 200px;   /* 存在感アップ */
-}
-
-.name-input:focus {
-  outline: none;
-  border-color: #0056b3;
-  box-shadow: 0 0 4px rgba(0, 91, 187, 0.5);
-}
-
-.last-row td {
-  border-left: none;
-  border-right: none;
-}
-
-`;
-
 // ====== ダミーデータ ======
 type Timeslot = {
   schedule_uuid: string;
@@ -480,15 +364,15 @@ export const UpdateCalendar: React.FC = () => {
   }, [myName]);
 
   return (
-    <div className="schedule-grid-wrapper">
+    <div className="update-calendar">
       {/* ✅ 常に表示する */}
-      <div className="name-input-block">
+      <div className="update-calendar__name-input-block">
         <input
           type="text"
           value={myNameInput}
           onChange={(e) => setMyNameInput(e.target.value)}
           placeholder="自分の名前を入力"
-          className="name-input"
+          className="update-calendar__name-input"
         />
         <button onClick={() => addOrUpdateMyName(myNameInput)}>
           {myName ? "名前を変更" : "追加"}
@@ -496,26 +380,31 @@ export const UpdateCalendar: React.FC = () => {
       </div>
 
       {dayBlocks.map((day) => (
-        <div className="day-block" key={day.scheduleUuid}>
+        <div className="update-calendar__day-block" key={day.scheduleUuid}>
           {/* 日付をテーブル上部に配置 */}
-          <div className="date-label">{formatDate(day.date)}</div>
+          <div className="update-calendar__date-label">
+            {formatDate(day.date)}
+          </div>
 
           {/* 時間ラベル */}
-          <div className="time-labels">
+          <div className="update-calendar__time-labels">
             {day.hours
               .filter((h) => h.getMinutes() === 0) // ← :00 だけ表示
               .map((h) => (
-                <div className="time-label" key={h.toISOString()}>
+                <div
+                  className="update-calendar__time-label"
+                  key={h.toISOString()}
+                >
                   {formatHour(h)}
                 </div>
               ))}
           </div>
 
           {/* グリッドテーブル */}
-          <div className="table-container">
-            <div className="table-wrapper">
+          <div className="update-calendar__table-container">
+            <div className="update-calendar__table-wrapper">
               <table
-                className="schedule-day-table"
+                className="update-calendar__day-table"
                 style={{
                   minWidth: `${(NAMES.length + (myName ? 1 : 0)) * CELL_WIDTH}px`,
                 }}
@@ -532,11 +421,19 @@ export const UpdateCalendar: React.FC = () => {
                   {day.hours.map((h, rowIndex) => (
                     <tr
                       key={h.toISOString()}
-                      className={`
-        ${rowIndex % 4 === 0 ? "hour-line" : ""}
-        ${rowIndex % 2 === 1 ? "half-hour-line" : ""}
-        ${rowIndex === day.hours.length - 1 ? "last-row" : ""}
-      `}
+                      className={[
+                        rowIndex % 4 === 0
+                          ? "update-calendar__row--hour-line"
+                          : "",
+                        rowIndex % 2 === 1
+                          ? "update-calendar__row--half-hour-line"
+                          : "",
+                        rowIndex === day.hours.length - 1
+                          ? "update-calendar__row--last-row"
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                       style={
                         rowIndex === day.hours.length - 1
                           ? {
@@ -579,11 +476,12 @@ export const UpdateCalendar: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+
               {/* 1. 既存 overlays（青 or 自分だけオレンジ） */}
               {overlays
                 .filter((o) => o.schedule_uuid === day.scheduleUuid)
                 .map((o, i) => {
-                  const CELL_HEIGHT = 57;
+                  const CELL_HEIGHT = 56;
                   const start = new Date(o.start);
                   const end = new Date(o.end);
                   const startOffsetMs =
@@ -602,8 +500,12 @@ export const UpdateCalendar: React.FC = () => {
                   return (
                     <div
                       key={i}
-                      className="overlay"
-                      className={`overlay ${isDragging ? "no-pe" : ""}`}
+                      className={[
+                        "update-calendar__overlay",
+                        isDragging ? "update-calendar__overlay--no-pe" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                       style={{
                         top,
                         left: personIndex * CELL_WIDTH,
@@ -621,8 +523,8 @@ export const UpdateCalendar: React.FC = () => {
               {/* 2. pendingOverlays（全部オレンジで表示） */}
               {pendingOverlays
                 .filter((o) => o.schedule_uuid === day.scheduleUuid)
-                .map((o, i) => {
-                  const CELL_HEIGHT = 57;
+                .map((o) => {
+                  const CELL_HEIGHT = 56;
                   const start = new Date(o.start);
                   const end = new Date(o.end);
 
@@ -647,8 +549,12 @@ export const UpdateCalendar: React.FC = () => {
                   return (
                     <div
                       key={o.uuid}
-                      className="overlay"
-                      className={`overlay ${isDragging ? "no-pe" : ""}`}
+                      className={[
+                        "update-calendar__overlay",
+                        isDragging ? "update-calendar__overlay--no-pe" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                       style={{
                         top,
                         left: personIndex * CELL_WIDTH,
@@ -669,7 +575,7 @@ export const UpdateCalendar: React.FC = () => {
               {selectedOverlay &&
                 selectedOverlay.dateKey === day.dateKey &&
                 (() => {
-                  const CELL_HEIGHT = 57;
+                  const CELL_HEIGHT = 56;
                   const start = selectedOverlay.start;
                   const end = selectedOverlay.end;
 
@@ -691,8 +597,12 @@ export const UpdateCalendar: React.FC = () => {
 
                   return (
                     <div
-                      className="overlay"
-                      className={`overlay ${isDragging ? "no-pe" : ""}`}
+                      className={[
+                        "update-calendar__overlay",
+                        isDragging ? "update-calendar__overlay--no-pe" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
                       style={{
                         top,
                         left: personIndex * CELL_WIDTH,
@@ -707,8 +617,6 @@ export const UpdateCalendar: React.FC = () => {
           </div>
         </div>
       ))}
-
-      <style>{scheduleGridStyles}</style>
     </div>
   );
 };
