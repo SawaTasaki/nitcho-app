@@ -9,6 +9,8 @@ export type HomeProps = {
   onOpenUrl?: (url: string) => void;
 };
 
+export type MainViewMode = "create" | "update";
+
 export type MainViewProps = {
   mode: MainViewMode | null;
   onRequestCreate: () => void;

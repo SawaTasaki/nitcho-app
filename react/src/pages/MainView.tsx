@@ -3,8 +3,6 @@ import { CreateCalendar } from "./CreateCalendar";
 import { UpdateCalendar } from "./UpdateCalendar";
 import type { MainViewProps } from "../types/pages";
 
-export type MainViewMode = "create" | "update";
-
 export function MainView({
   mode,
   onRequestCreate,
