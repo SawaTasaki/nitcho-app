@@ -1,18 +1,19 @@
+import type { MainViewMode } from "./pagesUnion";
+
 export type HeaderProps = {
-  title: string;
-  onClickTitle?: () => void;
-};
-
-export type HomeProps = {
-  goCreate: () => void;
-  goUpdate: () => void;
-  onOpenUrl?: (url: string) => void;
-};
-
-export type MainViewMode = "create" | "update";
-
-export type MainViewProps = {
-  mode: MainViewMode | null;
-  onRequestCreate: () => void;
-  onRequestUpdate: () => void;
-};
+    readonly title: string;
+    readonly onClickTitle?: () => void;
+  };
+  
+  export type HomeProps = {
+    readonly goCreate: () => void;
+    readonly goUpdate: () => void;
+    readonly onOpenUrl?: (url: string) => void;
+  };
+    
+  export type MainViewProps = {
+    readonly mode: MainViewMode | null;
+    readonly onRequestCreate: () => void;
+    readonly onRequestUpdate: () => void;
+  };
+  

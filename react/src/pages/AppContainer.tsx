@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Header } from "./Header";
-import { MainView, MainViewMode } from "./MainView";
+import { MainView } from "./MainView";
+import { MainViewMode } from "../types/pagesUnion";
 
 export function AppContainer() {
   const [mode, setMode] = useState<MainViewMode | null>(null);
