@@ -1,14 +1,9 @@
 import { Home } from "./Home";
 import { CreateCalendar } from "./CreateCalendar";
 import { UpdateCalendar } from "./UpdateCalendar";
+import type { MainViewProps } from "../types/pages";
 
 export type MainViewMode = "create" | "update";
-
-type MainViewProps = {
-  mode: MainViewMode | null;
-  onRequestCreate: () => void;
-  onRequestUpdate: () => void;
-};
 
 export function MainView({
   mode,
