@@ -10,7 +10,11 @@ type MainViewProps = {
   onRequestUpdate: () => void;
 };
 
-export function MainView({ mode, onRequestCreate, onRequestUpdate }: MainViewProps) {
+export function MainView({
+  mode,
+  onRequestCreate,
+  onRequestUpdate,
+}: MainViewProps) {
   return (
     <main className="main-view">
       {mode === "create" ? (

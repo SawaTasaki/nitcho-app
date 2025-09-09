@@ -86,7 +86,7 @@ export function CreateCalendar() {
       <div className="calendar__header">
         <div className="calendar__header-inner">
           <h2 className="calendar__title">カレンダー新規作成</h2>
-  
+
           <div className="calendar__actions">
             <button
               type="button"
@@ -95,13 +95,16 @@ export function CreateCalendar() {
             >
               追加
             </button>
-            <button type="submit" className="calendar__btn calendar__btn--primary">
+            <button
+              type="submit"
+              className="calendar__btn calendar__btn--primary"
+            >
               保存
             </button>
           </div>
         </div>
       </div>
-  
+
       <form onSubmit={handleSave} className="calendar__form">
         <div className="calendar__rows">
           {rows.map((row, idx) => (
@@ -116,7 +119,7 @@ export function CreateCalendar() {
                     onChange={(e) => handleChange(idx, "date", e.target.value)}
                   />
                 </div>
-  
+
                 <div className="calendar__field">
                   <div className="calendar__label">開始時刻</div>
                   <input
@@ -127,7 +130,7 @@ export function CreateCalendar() {
                     onChange={(e) => handleChange(idx, "start", e.target.value)}
                   />
                 </div>
-  
+
                 <div className="calendar__field">
                   <div className="calendar__label">終了時刻</div>
                   <input
@@ -138,7 +141,7 @@ export function CreateCalendar() {
                     onChange={(e) => handleChange(idx, "end", e.target.value)}
                   />
                 </div>
-  
+
                 <button
                   type="button"
                   aria-label="行を削除"
@@ -152,5 +155,4 @@ export function CreateCalendar() {
       </form>
     </div>
   );
-  
 }
