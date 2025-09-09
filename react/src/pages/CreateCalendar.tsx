@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./styles/CreateCalendar.css";
+// import "./styles/CreateCalendar.css";
 
 type Row = {
   date: string; // "YYYY-MM-DD"
@@ -82,46 +82,48 @@ export function CreateCalendar() {
   };
 
   return (
-    <div className="cc-root">
-      <div className="cc-header">
-        <div className="cc-headerInner">
-          <h2 className="cc-title">カレンダー新規作成</h2>
+    <div className="calendar">
+      <div className="calendar__header">
+        <div className="calendar__header-inner">
+          <h2 className="calendar__title">カレンダー新規作成</h2>
 
-          <div className="cc-actions">
+          <div className="calendar__actions">
             <button
               type="button"
               onClick={handleAdd}
-              className="cc-btn cc-btnGhost"
+              className="calendar__btn calendar__btn--ghost"
             >
               追加
             </button>
-            <button type="submit" className="cc-btn cc-btnPrimary">
+            <button
+              type="submit"
+              className="calendar__btn calendar__btn--primary"
+            >
               保存
             </button>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSave} className="cc-form">
-        {/* 入力カード群は下に */}
-        <div className="cc-rows">
+      <form onSubmit={handleSave} className="calendar__form">
+        <div className="calendar__rows">
           {rows.map((row, idx) => (
-            <div key={idx} className="cc-rowCard">
-              <div className="cc-rowGrid">
-                <div className="cc-field">
-                  <div className="cc-label">日付</div>
+            <div key={idx} className="calendar__row-card">
+              <div className="calendar__row-grid">
+                <div className="calendar__field">
+                  <div className="calendar__label">日付</div>
                   <input
-                    className="cc-input"
+                    className="calendar__input"
                     type="date"
                     value={row.date}
                     onChange={(e) => handleChange(idx, "date", e.target.value)}
                   />
                 </div>
 
-                <div className="cc-field">
-                  <div className="cc-label">開始時刻</div>
+                <div className="calendar__field">
+                  <div className="calendar__label">開始時刻</div>
                   <input
-                    className="cc-input"
+                    className="calendar__input"
                     type="time"
                     step={900}
                     value={row.start}
@@ -129,10 +131,10 @@ export function CreateCalendar() {
                   />
                 </div>
 
-                <div className="cc-field">
-                  <div className="cc-label">終了時刻</div>
+                <div className="calendar__field">
+                  <div className="calendar__label">終了時刻</div>
                   <input
-                    className="cc-input"
+                    className="calendar__input"
                     type="time"
                     step={900}
                     value={row.end}
@@ -143,7 +145,7 @@ export function CreateCalendar() {
                 <button
                   type="button"
                   aria-label="行を削除"
-                  className="cc-deleteBtn"
+                  className="calendar__delete-btn"
                   onClick={() => handleDelete(idx)}
                 />
               </div>

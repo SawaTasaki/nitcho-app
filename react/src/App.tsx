@@ -1,8 +1,5 @@
-import "./App.css";
-import { ScheduleGrid } from "./ScheduleGrid";
+import { AppContainer } from "./pages/AppContainer";
 
-function App() {
-  return <ScheduleGrid />;
+export default function App() {
+  return <AppContainer />;
 }
-
-export default App;
