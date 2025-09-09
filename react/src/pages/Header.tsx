@@ -1,7 +1,4 @@
-type HeaderProps = {
-  title: string;
-  onClickTitle?: () => void;
-};
+import type { HeaderProps } from "../types/pages";
 
 export function Header({ title, onClickTitle }: HeaderProps) {
   const clickable = Boolean(onClickTitle);
