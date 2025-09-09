@@ -15,7 +15,7 @@ export function Home({ goCreate, goUpdate, onOpenUrl }: HomeProps) {
   return (
     <div className="home">
       <input
-        className="home__input"
+        className="input home__input"
         type="text"
         placeholder="共有されたURLを貼り付け"
         value={url}

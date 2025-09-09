@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Header } from "./Header";
 import { MainView } from "./MainView";
 import { MainViewMode } from "../types/pagesEnum";
+import "../styles/pages.css";
 
 export function AppContainer() {
   const [mode, setMode] = useState<MainViewMode | null>(null);
