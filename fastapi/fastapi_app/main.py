@@ -9,6 +9,16 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:5173")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[frontend_origin],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 def get_db():
     db = SessionLocal()
     try:
