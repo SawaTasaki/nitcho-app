@@ -1,5 +1,3 @@
-// src/pages/create-calendar/useCreateCalendar.ts
-
 import { useState } from "react";
 import type { Row, TimeslotPayload } from "../../types/pages";
 import { addDays, isTimeOrderValid, toDateTimeString } from "@/utils/datetime";
