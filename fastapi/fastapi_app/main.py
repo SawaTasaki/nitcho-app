@@ -1,14 +1,9 @@
-import os
 from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from dotenv import load_dotenv
+from uuid import UUID
 
 from . import models, schemas, crud
 from .database import SessionLocal, engine
-from .models import Post
-
-load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -31,10 +26,13 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/posts", response_model=list[schemas.PostRead])
-def read_posts(db: Session = Depends(get_db)):
-    return crud.get_posts(db)
+@app.post("/schedules", response_model=schemas.ScheduleRead)
+def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
+    return crud.create_schedule(db, schedule)
 
-@app.post("/posts", response_model=schemas.PostRead)
-def create_new_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
-    return crud.create_post(db, post)
+@app.get("/schedules/{schedule_uuid}", response_model=schemas.ScheduleRead)
+def read_schedule(schedule_uuid: UUID, db: Session = Depends(get_db)):
+    db_schedule = crud.get_schedule(db, schedule_uuid)
+    if not db_schedule:
+        raise HTTPException(status_code=404, detail="そのUUIDのスケジュールは見つかりませんでした。")
+    return db_schedule
