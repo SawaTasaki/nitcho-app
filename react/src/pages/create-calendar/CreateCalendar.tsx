@@ -9,6 +9,8 @@ export function CreateCalendar() {
     handleAdd,
     handleDelete,
     handleSave,
+    title,
+    setTitle,
   } = useCreateCalendar();
 
   return (
@@ -39,6 +41,17 @@ export function CreateCalendar() {
       </div>
 
       <form id="calendar-form" onSubmit={handleSave} className="calendar__form">
+      <div className="calendar__title-field">
+    <div className="calendar__label">タイトル</div>
+    <input
+      className="calendar__title-input"
+      type="text"
+      placeholder="スケジュールのタイトルを入力"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      disabled={isSubmitting}
+    />
+  </div>
         <div className="calendar__rows">
           {rows.map((row, idx) => (
             <div key={idx} className="calendar__row-card">
