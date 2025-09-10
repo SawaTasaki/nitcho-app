@@ -1,5 +1,5 @@
 import { Home } from "./Home";
-import { CreateCalendar } from "./CreateCalendar";
+import { CreateCalendar } from "./create-calendar/CreateCalendar";
 import { UpdateCalendar } from "./UpdateCalendar";
 import type { MainViewProps } from "../types/pages";
 
