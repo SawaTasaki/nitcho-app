@@ -1,12 +1,28 @@
-CREATE TABLE IF NOT EXISTS post (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    username VARCHAR(255) NOT NULL,
-    text TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- スケジュール本体
+CREATE TABLE IF NOT EXISTS schedules (
+    uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
-INSERT INTO post (title, username, text) VALUES
-('はじめての投稿', 'taro', 'これは最初の投稿です！'),
-('こんにちは世界', 'hanako', 'ReactとFastAPIで掲示板アプリを作っています。'),
-('質問があります', 'satoshi', 'FastAPIでCORSの設定がうまくいきません。誰か助けて！');
+-- スケジュールのタイムスロット
+CREATE TABLE IF NOT EXISTS schedule_timeslots (
+    id SERIAL PRIMARY KEY,
+    schedule_uuid UUID NOT NULL REFERENCES schedules(uuid) ON DELETE CASCADE,
+    start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+);
+
+INSERT INTO schedules (uuid, title)
+VALUES ('11111111-2222-3333-4444-555555555555', 'テスト用スケジュール');
+
+INSERT INTO schedule_timeslots (schedule_uuid, start_time, end_time)
+VALUES
+  ('11111111-2222-3333-4444-555555555555', '2025-09-10 09:00:00', '2025-09-10 12:00:00'),
+  ('11111111-2222-3333-4444-555555555555', '2025-09-10 13:00:00', '2025-09-10 15:00:00'),
+  ('11111111-2222-3333-4444-555555555555', '2025-09-11 10:00:00', '2025-09-11 11:00:00');
