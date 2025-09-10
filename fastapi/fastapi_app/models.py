@@ -1,10 +1,28 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, String, TIMESTAMP, ForeignKey, func, Integer
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
+import uuid
+
 from .database import Base
 
-class Post(Base):
-    __tablename__ = "post"
+class Schedule(Base):
+    __tablename__ = "schedules"
+
+    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    timeslots = relationship("ScheduleTimeslot", back_populates="schedule", cascade="all, delete")
+
+class ScheduleTimeslot(Base):
+    __tablename__ = "schedule_timeslots"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255), nullable=False)
-    username = Column(String(100), nullable=False)
-    text = Column(Text, nullable=False)
+    schedule_uuid = Column(UUID(as_uuid=True), ForeignKey("schedules.uuid", ondelete="CASCADE"))
+    start_time = Column(TIMESTAMP, nullable=False)
+    end_time = Column(TIMESTAMP, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    schedule = relationship("Schedule", back_populates="timeslots")
