@@ -1,8 +1,15 @@
 import { useState } from "react";
-import type { Row, TimeslotPayload } from "../../types/pages";
+import type {
+  Row,
+  TimeslotPayload,
+  CreateCalendarProps,
+  SavedScheduleResponse,
+} from "../../types/pages";
 import { addDays, isTimeOrderValid, toDateTimeString } from "@/utils/datetime";
 
-export const useCreateCalendar = () => {
+export const useCreateCalendar = ({
+  onCreateCalendarSuccess,
+}: CreateCalendarProps) => {
   const [rows, setRows] = useState<Row[]>([{ date: "", start: "", end: "" }]);
   const [title, setTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,10 +45,13 @@ export const useCreateCalendar = () => {
   };
 
   // バックエンドに schedule を送信する非同期関数
-  const submitToBackend = async (title: string, timeslots: TimeslotPayload[]) => {
+  const submitToBackend = async (
+    title: string,
+    timeslots: TimeslotPayload[],
+  ): Promise<SavedScheduleResponse> => {
     const payload = { title, timeslots };
   
-    const endpoint = `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules`; 
+    const endpoint = `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules`;
     console.log("POST payload:", payload);
   
     const res = await fetch(endpoint, {
@@ -55,61 +65,62 @@ export const useCreateCalendar = () => {
       throw new Error(`Failed to save (HTTP ${res.status}): ${text}`);
     }
   
-    return res.json();
-  };  
+    return res.json() as Promise<SavedScheduleResponse>;
+  };
 
   // 入力行を検証・整形してバックエンド送信し、結果をユーザーに通知する関数
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // タイトル必須チェック
     if (!title.trim()) {
       alert("タイトルを入力してください。");
       return;
     }
-  
+
     // 1) 入力済み行のみ抽出
     const filled = rows.filter((r) => r.date && r.start && r.end);
-  
+
     // 2) 時間が逆の行は無視
     const valid = filled.filter((r) => isTimeOrderValid(r.start, r.end));
     const ignoredCount = filled.length - valid.length;
-  
+
     // 3) ペイロード生成
     const timeslots: TimeslotPayload[] = valid.map((r) => ({
       start_time: toDateTimeString(r.date, r.start),
       end_time: toDateTimeString(r.date, r.end),
     }));
-  
+
     if (timeslots.length === 0) {
       alert("有効な行がありません。");
       return;
     }
-  
+
     try {
       setIsSubmitting(true);
       const saved = await submitToBackend(title, timeslots);
-  
-      // 保存成功後のメッセージ
+    
       const summary = saved.timeslots
-        .map(
-          (t: any, i: number) => `${i + 1}. ${t.start_time} - ${t.end_time}`
-        )
+        .map((t, i) => `${i + 1}. ${t.start_time} - ${t.end_time}`)
         .join("\n");
-  
+    
       const ignoredMsg =
         ignoredCount > 0
           ? `\n（時間が逆の行は ${ignoredCount} 件スキップしました）`
           : "";
-  
+    
       alert(`保存しました：${saved.title}\n${summary}${ignoredMsg}`);
+    
+      const createdCalendarUrl = `${window.location.origin}/?uuid=${saved.uuid}`;
+      onCreateCalendarSuccess(createdCalendarUrl);
     } catch (err: unknown) {
       console.error(err);
       alert(`保存に失敗しました：${(err as Error)?.message ?? String(err)}`);
     } finally {
       setIsSubmitting(false);
     }
-  };  
+    
+  };
 
   return {
     rows,

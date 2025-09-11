@@ -1,7 +1,10 @@
 import React from "react";
 import { useCreateCalendar } from "./useCreateCalendar";
+import type { CreateCalendarProps } from "../types/pages";
 
-export function CreateCalendar() {
+export function CreateCalendar({
+  onCreateCalendarSuccess,
+}: CreateCalendarProps) {
   const {
     rows,
     isSubmitting,
@@ -11,7 +14,7 @@ export function CreateCalendar() {
     handleSave,
     title,
     setTitle,
-  } = useCreateCalendar();
+  } = useCreateCalendar({ onCreateCalendarSuccess: onCreateCalendarSuccess });
 
   return (
     <div className="calendar">
