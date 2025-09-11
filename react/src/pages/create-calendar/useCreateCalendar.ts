@@ -52,7 +52,6 @@ export const useCreateCalendar = ({
     const payload = { title, timeslots };
   
     const endpoint = `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules`;
-    console.log("POST payload:", payload);
   
     const res = await fetch(endpoint, {
       method: "POST",
@@ -99,18 +98,6 @@ export const useCreateCalendar = ({
     try {
       setIsSubmitting(true);
       const saved = await submitToBackend(title, timeslots);
-    
-      const summary = saved.timeslots
-        .map((t, i) => `${i + 1}. ${t.start_time} - ${t.end_time}`)
-        .join("\n");
-    
-      const ignoredMsg =
-        ignoredCount > 0
-          ? `\n（時間が逆の行は ${ignoredCount} 件スキップしました）`
-          : "";
-    
-      alert(`保存しました：${saved.title}\n${summary}${ignoredMsg}`);
-    
       const createdCalendarUrl = `${window.location.origin}/?uuid=${saved.uuid}`;
       onCreateCalendarSuccess(createdCalendarUrl);
     } catch (err: unknown) {
