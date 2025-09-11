@@ -6,6 +6,9 @@ import "../styles/pages.css";
 
 export function AppContainer() {
   const [mode, setMode] = useState<MainViewMode | null>(null);
+  const [createdCalendarUrl, setCreatedCalendarUrl] = useState<string>(
+    "URL初期値(これが表示されている場合エラーです AppContainer)",
+  );
 
   return (
     <div className="app-container">
@@ -16,6 +19,11 @@ export function AppContainer() {
           mode={mode}
           onRequestCreate={() => setMode(MainViewMode.Create)}
           onRequestUpdate={() => setMode(MainViewMode.Update)}
+          onCreateCalendarSuccess={(url: string) => {
+            setCreatedCalendarUrl(url);
+            setMode(MainViewMode.CreateCalendarSuccess);
+          }}
+          createdCalendarUrl={createdCalendarUrl}
         />
       </div>
     </div>

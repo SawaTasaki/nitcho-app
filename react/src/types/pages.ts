@@ -15,6 +15,8 @@ export type MainViewProps = {
   readonly mode: MainViewMode | null;
   readonly onRequestCreate: () => void;
   readonly onRequestUpdate: () => void;
+  readonly onCreateCalendarSuccess: (url: string) => void;
+  readonly createdCalendarUrl?: string;
 };
 
 export type Row = {
@@ -26,4 +28,25 @@ export type Row = {
 export type TimeslotPayload = {
   start_time: string; // "YYYY-MM-DD HH:MM:SS"
   end_time: string; // "YYYY-MM-DD HH:MM:SS"
+};
+
+export type CreateCalendarProps = {
+  readonly onCreateCalendarSuccess: (CreateCalendarUrl: string) => void;
+};
+
+export type CreateCalendarSuccessProps = {
+  createdCalendarUrl: string;
+  onUpdateAvailability: () => void;
+};
+
+export type SavedTimeslot = {
+  id: number;
+  start_time: string;
+  end_time: string;
+};
+
+export type SavedScheduleResponse = {
+  uuid: string;
+  title: string;
+  timeslots: SavedTimeslot[];
 };
