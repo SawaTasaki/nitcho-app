@@ -29,6 +29,8 @@ postgresql:
 	docker exec -it $(POSTGRESQL_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "\dt"
 	docker exec -it $(POSTGRESQL_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "SELECT * FROM schedules;"
 	docker exec -it $(POSTGRESQL_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "SELECT * FROM schedule_timeslots;"
+	docker exec -it $(POSTGRESQL_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "SELECT * FROM availabilities;"
+	docker exec -it $(POSTGRESQL_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "SELECT * FROM availability_timeslots;"
 	docker exec -it $(POSTGRESQL_CONTAINER) psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 react:
