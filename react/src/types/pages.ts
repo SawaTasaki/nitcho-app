@@ -14,7 +14,7 @@ export type HomeProps = {
 export type MainViewProps = {
   readonly mode: MainViewMode | null;
   readonly onRequestCreate: () => void;
-  readonly onRequestUpdate: () => void;
+  readonly onUpdateAvailability: () => void;
   readonly onCreateCalendarSuccess: (url: string) => void;
   readonly createdCalendarUrl?: string;
 };

@@ -483,7 +483,7 @@
   font-size: 0.95rem;
   color: #333;
   margin-bottom: 32px;
-  word-break: break-all; /* 長いURLを折り返す */
+  white-space: nowrap;
 }
 
 .create-calendar-success__actions {

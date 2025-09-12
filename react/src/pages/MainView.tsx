@@ -1,14 +1,14 @@
 import { Home } from "./Home";
 import { CreateCalendar } from "./create-calendar/CreateCalendar";
 import { CreateCalendarSuccess } from "./create-calendar-success/CreateCalendarSuccess";
-import { UpdateCalendar } from "./UpdateCalendar";
+import { UpdateAvailability } from "./update-availability/UpdateAvailability";
 import type { MainViewProps } from "../types/pages";
 import { MainViewMode } from "../types/pagesEnum";
 
 export function MainView({
   mode,
   onRequestCreate,
-  onRequestUpdate,
+  onUpdateAvailability,
   onCreateCalendarSuccess,
   createdCalendarUrl,
 }: MainViewProps) {
@@ -16,18 +16,18 @@ export function MainView({
     <main className="main-view">
       {mode === MainViewMode.Create ? (
         <CreateCalendar onCreateCalendarSuccess={onCreateCalendarSuccess} />
-      ) : mode === MainViewMode.Update ? (
-        <UpdateCalendar />
+      ) : mode === MainViewMode.UpdateAvailability ? (
+        <UpdateAvailability />
       ) : mode === MainViewMode.CreateCalendarSuccess ? (
         <CreateCalendarSuccess
           createdCalendarUrl={
             createdCalendarUrl ??
             "URL初期値(これが表示されている場合エラーです MainView)"
           }
-          onUpdateAvailability={onRequestUpdate}
+          onUpdateAvailability={onUpdateAvailability}
         />
       ) : (
-        <Home goCreate={onRequestCreate} goUpdate={onRequestUpdate} />
+        <Home goCreate={onRequestCreate} goUpdate={onUpdateAvailability} />
       )}
     </main>
   );

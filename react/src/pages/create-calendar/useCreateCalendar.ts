@@ -50,20 +50,20 @@ export const useCreateCalendar = ({
     timeslots: TimeslotPayload[],
   ): Promise<SavedScheduleResponse> => {
     const payload = { title, timeslots };
-  
+
     const endpoint = `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules`;
-  
+
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-  
+
     if (!res.ok) {
       const text = await res.text();
       throw new Error(`Failed to save (HTTP ${res.status}): ${text}`);
     }
-  
+
     return res.json() as Promise<SavedScheduleResponse>;
   };
 
@@ -82,7 +82,6 @@ export const useCreateCalendar = ({
 
     // 2) 時間が逆の行は無視
     const valid = filled.filter((r) => isTimeOrderValid(r.start, r.end));
-    const ignoredCount = filled.length - valid.length;
 
     // 3) ペイロード生成
     const timeslots: TimeslotPayload[] = valid.map((r) => ({
@@ -106,7 +105,6 @@ export const useCreateCalendar = ({
     } finally {
       setIsSubmitting(false);
     }
-    
   };
 
   return {
