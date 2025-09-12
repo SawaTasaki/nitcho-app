@@ -11,13 +11,14 @@ export function MainView({
   onUpdateAvailability,
   onCreateCalendarSuccess,
   createdCalendarUrl,
+  scheduleUuid,
 }: MainViewProps) {
   return (
     <main className="main-view">
-      {mode === MainViewMode.Create ? (
+      {scheduleUuid ? (
+        <UpdateAvailability scheduleUuid={scheduleUuid} />
+      ) : mode === MainViewMode.Create ? (
         <CreateCalendar onCreateCalendarSuccess={onCreateCalendarSuccess} />
-      ) : mode === MainViewMode.UpdateAvailability ? (
-        <UpdateAvailability />
       ) : mode === MainViewMode.CreateCalendarSuccess ? (
         <CreateCalendarSuccess
           createdCalendarUrl={

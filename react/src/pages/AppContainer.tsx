@@ -9,6 +9,12 @@ export function AppContainer() {
   const [createdCalendarUrl, setCreatedCalendarUrl] = useState<string>(
     "URL初期値(これが表示されている場合エラーです AppContainer)",
   );
+  const [scheduleUuid, setScheduleUuid] = useState<string | null>(null);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const value = params.get("schedule-uuid");
+    setScheduleUuid(value);
+  }, []);
 
   return (
     <div className="app-container">
@@ -24,6 +30,7 @@ export function AppContainer() {
             setMode(MainViewMode.CreateCalendarSuccess);
           }}
           createdCalendarUrl={createdCalendarUrl}
+          scheduleUuid={scheduleUuid}
         />
       </div>
     </div>

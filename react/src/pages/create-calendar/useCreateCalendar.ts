@@ -97,7 +97,7 @@ export const useCreateCalendar = ({
     try {
       setIsSubmitting(true);
       const saved = await submitToBackend(title, timeslots);
-      const createdCalendarUrl = `${window.location.origin}/?uuid=${saved.uuid}`;
+      const createdCalendarUrl = `${window.location.origin}/?schedule-uuid=${saved.uuid}`;
       onCreateCalendarSuccess(createdCalendarUrl);
     } catch (err: unknown) {
       console.error(err);
