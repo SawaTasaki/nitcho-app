@@ -16,6 +16,12 @@ type Timeslot = {
   end_time: string;
 };
 
+type ScheduleApiResponse = {
+  uuid: string;
+  title: string;
+  timeslots: Timeslot[];
+};
+
 const DUMMY_SCHEDULE_TIMESLOTS: Timeslot[] = [
   {
     schedule_uuid: "0000",
@@ -249,9 +255,12 @@ function buildDayBlocks(timeslots: Timeslot[]): DayBlock[] {
   return result;
 }
 
+type UpdateAvailabilityProps = {
+  scheduleUuid: string | null;
+};
+
 // ====== Component ======
-export const UpdateAvailability: React.FC = () => {
-  const dayBlocks = buildDayBlocks(DUMMY_SCHEDULE_TIMESLOTS);
+export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
   const CELL_WIDTH = 120;
   const [isDragging, setIsDragging] = useState(false);
   const [selectedOverlay, setSelectedOverlay] = useState<{
@@ -266,6 +275,33 @@ export const UpdateAvailability: React.FC = () => {
   const [pendingIdCounter, setPendingIdCounter] = useState(0);
   const [myName, setMyName] = useState<string | null>(null);
   const [myNameInput, setMyNameInput] = useState("");
+
+  const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSchedule() {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}`
+        );
+        if (!res.ok) throw new Error("API error: " + res.status);
+        const data: ScheduleApiResponse = await res.json();
+        setTimeslots(Array.isArray(data.timeslots) ? data.timeslots : []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (scheduleUuid) {
+      fetchSchedule();
+    }
+  }, [scheduleUuid]);
+
+  const dayBlocks = buildDayBlocks(timeslots);
 
   const addOrUpdateMyName = (name: string) => {
     const trimmed = name.trim();
@@ -380,7 +416,7 @@ export const UpdateAvailability: React.FC = () => {
       </div>
 
       {dayBlocks.map((day) => (
-        <div className="update-calendar__day-block" key={day.scheduleUuid}>
+        <div className="update-calendar__day-block" key={`${day.scheduleUuid}-${day.dateKey}`}>
           {/* 日付をテーブル上部に配置 */}
           <div className="update-calendar__date-label">
             {formatDate(day.date)}
