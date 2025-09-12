@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./Header";
 import { MainView } from "./MainView";
 import { MainViewMode } from "../types/pagesEnum";
@@ -18,7 +18,7 @@ export function AppContainer() {
         <MainView
           mode={mode}
           onRequestCreate={() => setMode(MainViewMode.Create)}
-          onRequestUpdate={() => setMode(MainViewMode.Update)}
+          onUpdateAvailability={() => setMode(MainViewMode.UpdateAvailability)}
           onCreateCalendarSuccess={(url: string) => {
             setCreatedCalendarUrl(url);
             setMode(MainViewMode.CreateCalendarSuccess);

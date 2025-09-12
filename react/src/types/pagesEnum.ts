@@ -1,5 +1,5 @@
 export enum MainViewMode {
   Create = "create",
-  Update = "update",
+  UpdateAvailability = "update-availability",
   CreateCalendarSuccess = "create-calendar-success",
 }
