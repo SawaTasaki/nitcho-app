@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 
 from . import models, schemas, crud
 from .database import SessionLocal, engine
@@ -28,13 +29,35 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/schedules", response_model=schemas.ScheduleRead)
+@app.post("/schedules", response_model=schemas.ScheduleReadWithScheduleTimeslots)
 def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
     return crud.create_schedule(db, schedule)
 
-@app.get("/schedules/{schedule_uuid}", response_model=schemas.ScheduleRead)
+
+@app.get("/schedules/{schedule_uuid}", response_model=schemas.ScheduleReadWithScheduleTimeslots)
 def read_schedule(schedule_uuid: UUID, db: Session = Depends(get_db)):
     db_schedule = crud.get_schedule(db, schedule_uuid)
+    if not db_schedule:
+        raise HTTPException(status_code=404, detail="そのUUIDのスケジュールは見つかりませんでした。")
+    return db_schedule
+
+
+@app.post("/availabilities", response_model=schemas.AvailabilityReadWithAvailabilityTimeslots)
+def create_availability(availability: schemas.AvailabilityCreate, db: Session = Depends(get_db)):
+    return crud.create_availability(db, availability)
+
+
+@app.get("/availabilities/{availability_id}", response_model=schemas.AvailabilityReadWithAvailabilityTimeslots)
+def read_availability(availability_id: int, db: Session = Depends(get_db)):
+    db_avail = crud.get_availability(db, availability_id)
+    if not db_avail:
+        raise HTTPException(status_code=404, detail="可用性が見つかりませんでした。")
+    return db_avail
+
+
+@app.get("/schedules/{schedule_uuid}/with-availabilities", response_model=schemas.ScheduleReadWithAvailabilities)
+def read_schedule_with_availabilities(schedule_uuid: UUID, db: Session = Depends(get_db)):
+    db_schedule = crud.get_schedule_with_availabilities(db, schedule_uuid)
     if not db_schedule:
         raise HTTPException(status_code=404, detail="そのUUIDのスケジュールは見つかりませんでした。")
     return db_schedule

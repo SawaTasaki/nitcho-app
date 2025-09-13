@@ -15,6 +15,7 @@ class Schedule(Base):
     updated_at = Column(TIMESTAMP(timezone=False), server_default=func.now(), onupdate=func.now())
 
     schedule_timeslots = relationship("ScheduleTimeslot", back_populates="schedule", cascade="all, delete")
+    availabilities = relationship("Availability", back_populates="schedule", cascade="all, delete")
 
 
 class ScheduleTimeslot(Base):
@@ -40,6 +41,7 @@ class Availability(Base):
     created_at = Column(TIMESTAMP(timezone=False), server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=False), server_default=func.now(), onupdate=func.now())
 
+    schedule = relationship("Schedule", back_populates="availabilities")
     availability_timeslots = relationship("AvailabilityTimeslot", back_populates="availability", cascade="all, delete")
 
 
