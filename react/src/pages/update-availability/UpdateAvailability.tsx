@@ -233,7 +233,15 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                       }}
                       onClick={() => {
                         setPendingOverlays((prev) =>
-                          prev.filter((p) => p.uuid !== o.uuid),
+                          prev.filter(
+                            (p) =>
+                              !(
+                                p.schedule_timeslot_id === o.schedule_timeslot_id &&
+                                p.name === o.name &&
+                                p.start === o.start &&
+                                p.end === o.end
+                              ),
+                          ),
                         );
                       }}
                     />
