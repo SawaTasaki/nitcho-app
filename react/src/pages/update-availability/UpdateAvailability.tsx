@@ -3,10 +3,17 @@ import React, { useState, useEffect } from "react";
 type PendingOverlay = {
   uuid: string;
   schedule_uuid: string;
+  schedule_timeslot_id: number;
   date: string;
   name: string;
   start: string;
   end: string;
+};
+
+type Timeslot = {
+  schedule_uuid: string;
+  start_time: string;
+  end_time: string;
 };
 
 type ApiScheduleTimeslot = {
@@ -17,193 +24,32 @@ type ApiScheduleTimeslot = {
   updated_at: string;
 };
 
-type ApiScheduleResponse = {
-  uuid: string;
-  title: string;
-  schedule_timeslots: ApiScheduleTimeslot[];
-};
-
-// ====== ダミーデータ ======
-type Timeslot = {
-  schedule_uuid: string;
+type ApiAvailabilityTimeslot = {
+  id: number;
+  schedule_timeslot_id: number;
   start_time: string;
   end_time: string;
+  created_at: string;
+  updated_at: string;
 };
 
-type ScheduleApiResponse = {
+type ApiAvailability = {
+  id: number;
+  schedule_uuid: string;
+  guest_user_name: string;
+  created_at: string;
+  updated_at: string;
+  availability_timeslots: ApiAvailabilityTimeslot[];
+};
+
+type ApiScheduleWithAvailabilities = {
   uuid: string;
   title: string;
-  schedule_timeslots: ApiScheduleTimeslot[]; // 👈 修正
+  created_at: string;
+  updated_at: string;
+  schedule_timeslots: ApiScheduleTimeslot[];
+  availabilities: ApiAvailability[];
 };
-
-const DUMMY_SCHEDULE_TIMESLOTS: Timeslot[] = [
-  {
-    schedule_uuid: "0000",
-    start_time: "2025-07-12 00:00:00",
-    end_time: "2025-07-12 06:00:00",
-  },
-  {
-    schedule_uuid: "0001",
-    start_time: "2025-07-12 08:00:00",
-    end_time: "2025-07-12 12:00:00",
-  },
-  {
-    schedule_uuid: "0002",
-    start_time: "2025-07-13 00:00:00",
-    end_time: "2025-07-13 12:00:00",
-  },
-  {
-    schedule_uuid: "0003",
-    start_time: "2025-07-14 00:00:00",
-    end_time: "2025-07-14 18:00:00",
-  },
-  {
-    schedule_uuid: "0004",
-    start_time: "2025-07-15 00:00:00",
-    end_time: "2025-07-15 24:00:00",
-  },
-  {
-    schedule_uuid: "0005",
-    start_time: "2025-07-16 08:00:00",
-    end_time: "2025-07-16 20:00:00",
-  },
-];
-
-const NAMES = ["A子", "B子", "C子", "D子", "E子"];
-
-const OVERLAYS = [
-  // === A子 ===
-  {
-    schedule_uuid: "0000",
-    date: "2025-07-12",
-    name: "A子",
-    start: "2025-07-12 00:30:00",
-    end: "2025-07-12 02:45:00",
-  },
-  {
-    schedule_uuid: "0001",
-    date: "2025-07-12",
-    name: "A子",
-    start: "2025-07-12 08:30:00",
-    end: "2025-07-12 11:45:00",
-  },
-  {
-    schedule_uuid: "0002",
-    date: "2025-07-13",
-    name: "A子",
-    start: "2025-07-13 01:15:00",
-    end: "2025-07-13 04:00:00",
-  },
-  {
-    schedule_uuid: "0003",
-    date: "2025-07-14",
-    name: "A子",
-    start: "2025-07-14 10:00:00",
-    end: "2025-07-14 12:00:00",
-  },
-  {
-    schedule_uuid: "0004",
-    date: "2025-07-15",
-    name: "A子",
-    start: "2025-07-15 15:00:00",
-    end: "2025-07-15 17:30:00",
-  },
-  {
-    schedule_uuid: "0005",
-    date: "2025-07-16",
-    name: "A子",
-    start: "2025-07-16 09:00:00",
-    end: "2025-07-16 11:00:00",
-  },
-
-  // === B子 ===
-  {
-    schedule_uuid: "0000",
-    date: "2025-07-12",
-    name: "B子",
-    start: "2025-07-12 01:00:00",
-    end: "2025-07-12 03:15:00",
-  },
-  {
-    schedule_uuid: "0001",
-    date: "2025-07-12",
-    name: "B子",
-    start: "2025-07-12 08:00:00",
-    end: "2025-07-12 10:15:00",
-  },
-  {
-    schedule_uuid: "0002",
-    date: "2025-07-13",
-    name: "B子",
-    start: "2025-07-13 06:00:00",
-    end: "2025-07-13 10:00:00",
-  },
-  {
-    schedule_uuid: "0003",
-    date: "2025-07-14",
-    name: "B子",
-    start: "2025-07-14 15:00:00",
-    end: "2025-07-14 16:30:00",
-  },
-  {
-    schedule_uuid: "0004",
-    date: "2025-07-15",
-    name: "B子",
-    start: "2025-07-15 00:30:00",
-    end: "2025-07-15 04:00:00",
-  },
-  {
-    schedule_uuid: "0005",
-    date: "2025-07-16",
-    name: "B子",
-    start: "2025-07-16 10:30:00",
-    end: "2025-07-16 13:45:00",
-  },
-
-  // === C子 ===
-  {
-    schedule_uuid: "0000",
-    date: "2025-07-12",
-    name: "C子",
-    start: "2025-07-12 04:15:00",
-    end: "2025-07-12 06:00:00",
-  },
-  {
-    schedule_uuid: "0001",
-    date: "2025-07-12",
-    name: "C子",
-    start: "2025-07-12 09:15:00",
-    end: "2025-07-12 11:15:00",
-  },
-  {
-    schedule_uuid: "0002",
-    date: "2025-07-13",
-    name: "C子",
-    start: "2025-07-13 03:00:00",
-    end: "2025-07-13 07:30:00",
-  },
-  {
-    schedule_uuid: "0003",
-    date: "2025-07-14",
-    name: "C子",
-    start: "2025-07-14 01:00:00",
-    end: "2025-07-14 03:30:00",
-  },
-  {
-    schedule_uuid: "0004",
-    date: "2025-07-15",
-    name: "C子",
-    start: "2025-07-15 10:00:00",
-    end: "2025-07-15 12:15:00",
-  },
-  {
-    schedule_uuid: "0005",
-    date: "2025-07-16",
-    name: "C子",
-    start: "2025-07-16 13:00:00",
-    end: "2025-07-16 15:30:00",
-  },
-];
 
 // ====== Utility ======
 
@@ -235,17 +81,18 @@ function eachQuarterWithEnd(start: Date, end: Date): Date[] {
 
 type DayBlock = {
   scheduleUuid: string;
+  timeslotId: number;
   dateKey: string;
   date: Date;
   hours: Date[];
 };
 
-function buildDayBlocks(timeslots: Timeslot[]): DayBlock[] {
+function buildDayBlocks(scheduleUuid: string, timeslots: ApiScheduleTimeslot[]): DayBlock[] {
   const result: DayBlock[] = [];
 
   for (const slot of timeslots) {
-    const start = toDate(slot.start_time);
-    const end = toDate(slot.end_time);
+    const start = new Date(slot.start_time);
+    const end = new Date(slot.end_time);
 
     const dateKey =
       start.getFullYear() +
@@ -257,7 +104,8 @@ function buildDayBlocks(timeslots: Timeslot[]): DayBlock[] {
     const hours = eachQuarterWithEnd(start, end);
 
     result.push({
-      scheduleUuid: slot.schedule_uuid,
+      scheduleUuid,
+      timeslotId: slot.id,
       dateKey,
       date: start,
       hours,
@@ -265,7 +113,6 @@ function buildDayBlocks(timeslots: Timeslot[]): DayBlock[] {
   }
 
   result.sort((a, b) => a.date.getTime() - b.date.getTime());
-
   return result;
 }
 
@@ -284,11 +131,12 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
     dateKey: string;
     scheduleUuid: string;
   } | null>(null);
-  const [overlays, setOverlays] = useState(OVERLAYS); // 既存
+  const [overlays, setOverlays] = useState<PendingOverlay[]>([]);
   const [pendingOverlays, setPendingOverlays] = useState<PendingOverlay[]>([]);
   const [pendingIdCounter, setPendingIdCounter] = useState(0);
   const [myName, setMyName] = useState<string | null>(null);
   const [myNameInput, setMyNameInput] = useState("");
+  const [names, setNames] = useState<string[]>(["テストさん"]);
 
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const [loading, setLoading] = useState(true);
@@ -298,25 +146,54 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
       try {
         setLoading(true);
         const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}`
+          `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}/with-availabilities`
         );
         if (!res.ok) throw new Error("API error: " + res.status);
-        const data: ScheduleApiResponse = await res.json();
-        console.log("data", data);
+  
+        const data: ApiScheduleWithAvailabilities = await res.json();
+        console.log("取得したデータ", data);
+  
+        // timeslots
         setTimeslots(data.schedule_timeslots);
+  
+        // overlays に変換（全員分）
+        const loadedOverlays = data.availabilities.flatMap(av =>
+          av.availability_timeslots.map(ts => {
+            const parentSlot = data.schedule_timeslots.find(
+              s => s.id === ts.schedule_timeslot_id
+            );
+            if (!parentSlot) return null;
+            return {
+              uuid: String(ts.id),
+              schedule_uuid: data.uuid,
+              schedule_timeslot_id: ts.schedule_timeslot_id,
+              date: parentSlot.start_time.split("T")[0],
+              name: av.guest_user_name,
+              start: ts.start_time,
+              end: ts.end_time,
+            };
+          }).filter(Boolean)
+        );
+        setOverlays(loadedOverlays as PendingOverlay[]);
+    
+        // 名前一覧を state に保存
+        const apiNames = Array.from(new Set(data.availabilities.map(av => av.guest_user_name))).sort((a, b) => a.localeCompare(b, "ja"));
+        if (apiNames.length > 0) {
+          setNames(apiNames);
+        }
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     }
-
+  
     if (scheduleUuid) {
       fetchSchedule();
     }
   }, [scheduleUuid]);
-
-  const dayBlocks = buildDayBlocks(timeslots);
+  
+  const dayBlocks = scheduleUuid ? buildDayBlocks(scheduleUuid, timeslots) : [];
 
   const addOrUpdateMyName = (name: string) => {
     const trimmed = name.trim();
@@ -324,7 +201,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
       alert("名前を入力してください");
       return;
     }
-    if (NAMES.includes(trimmed)) {
+    if (names.includes(trimmed)) {
       alert("この名前はすでに使われています");
       return;
     }
@@ -457,12 +334,12 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
               <table
                 className="update-calendar__day-table"
                 style={{
-                  minWidth: `${(NAMES.length + (myName ? 1 : 0)) * CELL_WIDTH}px`,
+                  minWidth: `${(names.length + (myName ? 1 : 0)) * CELL_WIDTH}px`,
                 }}
               >
                 <thead>
                   <tr>
-                    {NAMES.map((n) => (
+                    {names.map((n) => (
                       <th key={n}>{n}</th>
                     ))}
                     {myName && <th>{myName}</th>}
@@ -496,7 +373,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
                           : undefined
                       }
                     >
-                      {NAMES.map((n) => (
+                      {names.map((n) => (
                         <td key={n + h.toISOString()} />
                       ))}
 
@@ -530,7 +407,10 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
 
               {/* 1. 既存 overlays（青 or 自分だけオレンジ） */}
               {overlays
-                .filter((o) => o.schedule_uuid === day.scheduleUuid)
+                .filter(o =>
+                  o.schedule_uuid === day.scheduleUuid &&
+                  o.schedule_timeslot_id === day.timeslotId
+                )
                 .map((o, i) => {
                   const CELL_HEIGHT = 56;
                   const start = new Date(o.start);
@@ -545,7 +425,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
                   const height =
                     (durationInMs / (1000 * 60 * 60)) * CELL_HEIGHT;
                   const personIndex =
-                    o.name === myName ? NAMES.length : NAMES.indexOf(o.name);
+                    o.name === myName ? names.length : names.indexOf(o.name);
                   if (personIndex === -1) return null;
 
                   return (
@@ -593,8 +473,8 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
                   // 🔽 修正: myName の場合は右端の列
                   const personIndex =
                     myName && o.name === myName
-                      ? NAMES.length
-                      : NAMES.indexOf(o.name);
+                      ? names.length
+                      : names.indexOf(o.name);
                   if (personIndex === -1) return null;
 
                   return (
@@ -642,8 +522,8 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
 
                   const personIndex =
                     selectedOverlay.name === myName
-                      ? NAMES.length
-                      : NAMES.indexOf(selectedOverlay.name);
+                      ? names.length
+                      : names.indexOf(selectedOverlay.name);
                   if (personIndex === -1) return null;
 
                   return (
