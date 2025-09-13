@@ -9,6 +9,20 @@ type PendingOverlay = {
   end: string;
 };
 
+type ApiScheduleTimeslot = {
+  id: number;
+  start_time: string;
+  end_time: string;
+  created_at: string;
+  updated_at: string;
+};
+
+type ApiScheduleResponse = {
+  uuid: string;
+  title: string;
+  schedule_timeslots: ApiScheduleTimeslot[];
+};
+
 // ====== ダミーデータ ======
 type Timeslot = {
   schedule_uuid: string;
@@ -19,7 +33,7 @@ type Timeslot = {
 type ScheduleApiResponse = {
   uuid: string;
   title: string;
-  timeslots: Timeslot[];
+  schedule_timeslots: ApiScheduleTimeslot[]; // 👈 修正
 };
 
 const DUMMY_SCHEDULE_TIMESLOTS: Timeslot[] = [
@@ -288,7 +302,8 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
         );
         if (!res.ok) throw new Error("API error: " + res.status);
         const data: ScheduleApiResponse = await res.json();
-        setTimeslots(Array.isArray(data.timeslots) ? data.timeslots : []);
+        console.log("data", data);
+        setTimeslots(data.schedule_timeslots);
       } catch (err) {
         console.error(err);
       } finally {
