@@ -51,3 +51,65 @@ export type SavedScheduleResponse = {
   title: string;
   timeslots: SavedTimeslot[];
 };
+
+export type Overlay = {
+  schedule_uuid: string;
+  schedule_timeslot_id: number;
+  date: string;
+  name: string;
+  start: string;
+  end: string;
+};
+
+export type ScheduleTimeslot = {
+  schedule_uuid: string;
+  start_time: string;
+  end_time: string;
+};
+
+export type ApiScheduleTimeslot = {
+  id: number;
+  start_time: string;
+  end_time: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ApiAvailabilityTimeslot = {
+  id: number;
+  schedule_timeslot_id: number;
+  start_time: string;
+  end_time: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ApiAvailability = {
+  id: number;
+  schedule_uuid: string;
+  guest_user_name: string;
+  created_at: string;
+  updated_at: string;
+  availability_timeslots: ApiAvailabilityTimeslot[];
+};
+
+export type ApiScheduleWithAvailabilities = {
+  uuid: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  schedule_timeslots: ApiScheduleTimeslot[];
+  availabilities: ApiAvailability[];
+};
+
+export type DayBlock = {
+  scheduleUuid: string;
+  timeslotId: number;
+  dateKey: string;
+  date: Date;
+  hours: Date[];
+};
+
+export type UpdateAvailabilityProps = {
+  scheduleUuid: string | null;
+};
