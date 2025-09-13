@@ -68,6 +68,11 @@ function formatHour(d: Date) {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
+function toLocalISOString(dt: Date) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}`;
+}
+
 // 例："2025-07-12T00:00:00"〜"2025-07-12T01:00:00" → "2025-07-12T00:00:00", "2025-07-12T00:15:00", "2025-07-12T00:30:00", "2025-07-12T00:45:00", "2025-07-12T01:00:00"
 function eachQuarterWithEnd(start: Date, end: Date): Date[] {
   const times: Date[] = [];
@@ -130,6 +135,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
     end: Date;
     dateKey: string;
     scheduleUuid: string;
+    timeslotId: string,
   } | null>(null);
   const [overlays, setOverlays] = useState<PendingOverlay[]>([]);
   const [pendingOverlays, setPendingOverlays] = useState<PendingOverlay[]>([]);
@@ -192,6 +198,52 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
       fetchSchedule();
     }
   }, [scheduleUuid]);
+
+  async function handleSave() {
+    if (!myName) {
+      alert("名前を入力してください");
+      return;
+    }
+  
+    if (pendingOverlays.length === 0) {
+      alert("保存する予定がありません");
+      return;
+    }
+  
+    // まとめる
+    const payload = {
+      guest_user_name: myName,
+      schedule_uuid: scheduleUuid,
+      timeslots: pendingOverlays.map(o => ({
+        schedule_timeslot_id: o.schedule_timeslot_id,
+        start_time: o.start,
+        end_time: o.end,
+      })),
+    };
+  
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_ORIGIN}/availabilities`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+  
+      if (!res.ok) throw new Error("API error: " + res.status);
+      const data = await res.json();
+      console.log("保存成功", data);
+  
+      // 保存できたら pendingOverlays をクリア
+      setPendingOverlays([]);
+    } catch (err) {
+      console.error("保存失敗", err);
+    }
+  }
+  
   
   const dayBlocks = scheduleUuid ? buildDayBlocks(scheduleUuid, timeslots) : [];
 
@@ -215,6 +267,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
     h: Date,
     dateKey: string,
     scheduleUuid: string,
+    timeslotId: number
   ) => {
     if (!myName) {
       alert("先に自分の名前を追加してください");
@@ -228,6 +281,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
       end: h,
       dateKey,
       scheduleUuid,
+      timeslotId,
     });
     console.log("=== 開始時間 ===", h);
   };
@@ -266,10 +320,11 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
           {
             uuid: String(pendingIdCounter),
             schedule_uuid: selectedOverlay.scheduleUuid,
+            schedule_timeslot_id: selectedOverlay.timeslotId,
             date: selectedOverlay.dateKey,
             name: myName!,
-            start: start.toISOString(),
-            end: end.toISOString(),
+            start: toLocalISOString(start),
+            end: toLocalISOString(end),
           },
         ]);
         setPendingIdCounter((prev) => prev + 1);
@@ -293,6 +348,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
 
   return (
     <div className="update-calendar">
+      <button onClick={handleSave}>保存</button>
       {/* ✅ 常に表示する */}
       <div className="update-calendar__name-input-block">
         <input
@@ -387,6 +443,7 @@ export function UpdateAvailability({scheduleUuid,}: UpdateAvailabilityProps) {
                               h,
                               day.dateKey,
                               day.scheduleUuid,
+                              day.timeslotId,
                             )
                           }
                           onMouseEnter={() =>
