@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
-import type { UpdateAvailabilityProps, Overlay, ApiScheduleWithAvailabilities, DayBlock, ApiScheduleTimeslot, ScheduleTimeslot } from "../../types/pages";
-import {
-  toLocalISOString,
-  eachQuarterWithEnd,
-} from "@/utils/datetime";
+import type {
+  UpdateAvailabilityProps,
+  Overlay,
+  ApiScheduleWithAvailabilities,
+  DayBlock,
+  ApiScheduleTimeslot,
+  ScheduleTimeslot,
+} from "../../types/pages";
+import { toLocalISOString, eachQuarterWithEnd } from "@/utils/datetime";
 
-export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps) => {
+export const useUpdateAvailability = ({
+  scheduleUuid,
+}: UpdateAvailabilityProps) => {
   const [overlays, setOverlays] = useState<Overlay[]>([]);
   const [pendingOverlays, setPendingOverlays] = useState<Overlay[]>([]);
   const [names, setNames] = useState<string[]>(["テストさん"]);
@@ -13,7 +19,9 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
   const [myNameInput, setMyNameInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
-  const [scheduleTimeslots, setScheduleTimeslots] = useState<ScheduleTimeslot[]>([]);
+  const [scheduleTimeslots, setScheduleTimeslots] = useState<
+    ScheduleTimeslot[]
+  >([]);
   const [selectedOverlay, setSelectedOverlay] = useState<{
     name: string;
     start: Date;
@@ -30,7 +38,7 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
       try {
         setLoading(true);
         const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}/with-availabilities`
+          `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}/with-availabilities`,
         );
         if (!res.ok) throw new Error("API error: " + res.status);
 
@@ -43,7 +51,7 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
           av.availability_timeslots
             .map((ts) => {
               const parentSlot = data.schedule_timeslots.find(
-                (s) => s.id === ts.schedule_timeslot_id
+                (s) => s.id === ts.schedule_timeslot_id,
               );
               if (!parentSlot) return null;
               return {
@@ -55,13 +63,13 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
                 end: ts.end_time,
               };
             })
-            .filter(Boolean)
+            .filter(Boolean),
         );
         setOverlays(loadedOverlays as Overlay[]);
 
         // 名前一覧を state に保存
         const apiNames = Array.from(
-          new Set(data.availabilities.map((av) => av.guest_user_name))
+          new Set(data.availabilities.map((av) => av.guest_user_name)),
         ).sort((a, b) => a.localeCompare(b, "ja"));
         if (apiNames.length > 0) {
           setNames(apiNames);
@@ -76,22 +84,25 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
     fetchSchedule();
   }, [scheduleUuid]);
 
-  function buildDayBlocks(scheduleUuid: string, timeslots: ApiScheduleTimeslot[]): DayBlock[] {
+  function buildDayBlocks(
+    scheduleUuid: string,
+    timeslots: ApiScheduleTimeslot[],
+  ): DayBlock[] {
     const result: DayBlock[] = [];
-  
+
     for (const slot of timeslots) {
       const start = new Date(slot.start_time);
       const end = new Date(slot.end_time);
-  
+
       const dateKey =
         start.getFullYear() +
         "-" +
         String(start.getMonth() + 1).padStart(2, "0") +
         "-" +
         String(start.getDate()).padStart(2, "0");
-  
+
       const hours = eachQuarterWithEnd(start, end);
-  
+
       result.push({
         scheduleUuid,
         timeslotId: slot.id,
@@ -100,13 +111,14 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
         hours,
       });
     }
-  
+
     result.sort((a, b) => a.date.getTime() - b.date.getTime());
     return result;
   }
-  
 
-  const dayBlocks = scheduleUuid ? buildDayBlocks(scheduleUuid, scheduleTimeslots) : [];
+  const dayBlocks = scheduleUuid
+    ? buildDayBlocks(scheduleUuid, scheduleTimeslots)
+    : [];
 
   // 名前を設定する関数
   const addOrUpdateMyName = (name: string) => {
@@ -155,7 +167,7 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
-        }
+        },
       );
 
       if (!res.ok) throw new Error("API error: " + res.status);
@@ -175,7 +187,7 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
     h: Date,
     dateKey: string,
     scheduleUuid: string,
-    timeslotId: number
+    timeslotId: number,
   ) => {
     if (!myName) {
       alert("先に自分の名前を追加してください");
@@ -200,7 +212,7 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
     h: Date,
     scheduleUuid: string,
     dayStart: Date,
-    dayEnd: Date
+    dayEnd: Date,
   ) => {
     if (
       isDragging &&
@@ -250,7 +262,7 @@ export const useUpdateAvailability = ({ scheduleUuid }: UpdateAvailabilityProps)
       prev.map((o) => ({
         ...o,
         name: myName,
-      }))
+      })),
     );
   }, [myName]);
 

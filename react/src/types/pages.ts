@@ -17,7 +17,7 @@ export type MainViewProps = {
   readonly onUpdateAvailability: () => void;
   readonly onCreateCalendarSuccess: (url: string) => void;
   readonly createdCalendarUrl?: string;
-  readonly scheduleUuid?: string,
+  readonly scheduleUuid?: string;
 };
 
 export type Row = {
