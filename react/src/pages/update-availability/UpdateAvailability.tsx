@@ -1,10 +1,7 @@
 import React from "react";
 import { useUpdateAvailability } from "./useUpdateAvailability";
 import type { UpdateAvailabilityProps } from "../types/pages";
-import {
-  formatDate,
-  formatHour,
-} from "@/utils/datetime";
+import { formatDate, formatHour } from "@/utils/datetime";
 
 export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
   const {
@@ -147,9 +144,10 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
               {/* 1. 既存 overlays（青 or 自分だけオレンジ） */}
               {overlays
-                .filter(o =>
-                  o.schedule_uuid === day.scheduleUuid &&
-                  o.schedule_timeslot_id === day.timeslotId
+                .filter(
+                  (o) =>
+                    o.schedule_uuid === day.scheduleUuid &&
+                    o.schedule_timeslot_id === day.timeslotId,
                 )
                 .map((o, i) => {
                   const CELL_HEIGHT = 56;
@@ -170,7 +168,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
                   return (
                     <div
-                    key={`${o.schedule_timeslot_id}-${o.name}-${o.start}-${o.end}`}
+                      key={`${o.schedule_timeslot_id}-${o.name}-${o.start}-${o.end}`}
                       className={[
                         "update-calendar__overlay",
                         isDragging ? "update-calendar__overlay--no-pe" : "",
@@ -290,4 +288,4 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
       ))}
     </div>
   );
-};
+}

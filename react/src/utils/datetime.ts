@@ -53,7 +53,7 @@ export const toDate = (s: string): Date => {
  */
 export const formatDate = (d: Date): string => {
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(
-    d.getDate()
+    d.getDate(),
   ).padStart(2, "0")}`;
 };
 
@@ -70,7 +70,7 @@ export const formatHour = (d: Date): string => {
 export const toLocalISOString = (dt: Date): string => {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(
-    dt.getHours()
+    dt.getHours(),
   )}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}`;
 };
 
