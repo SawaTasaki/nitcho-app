@@ -242,11 +242,11 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
               {/* 3. 今ドラッグ中（selectedOverlay、一時表示） */}
               {selectedOverlay &&
-                selectedOverlay.dateKey === day.dateKey &&
+                selectedOverlay.date === day.dateKey &&
                 (() => {
                   const CELL_HEIGHT = 56;
-                  const start = selectedOverlay.start;
-                  const end = selectedOverlay.end;
+                  const start = new Date(selectedOverlay.start);
+                  const end = new Date(selectedOverlay.end);
 
                   const startOffsetMs =
                     start.getTime() - day.hours[0].getTime();

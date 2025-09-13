@@ -22,16 +22,8 @@ export const useUpdateAvailability = ({
   const [scheduleTimeslots, setScheduleTimeslots] = useState<
     ScheduleTimeslot[]
   >([]);
-  const [selectedOverlay, setSelectedOverlay] = useState<{
-    name: string;
-    start: Date;
-    end: Date;
-    dateKey: string;
-    scheduleUuid: string;
-    timeslotId: number;
-  } | null>(null);
+  const [selectedOverlay, setSelectedOverlay] = useState<Overlay | null>(null);
 
-  // スケジュールと可用時間を取得
   useEffect(() => {
     async function fetchSchedule() {
       if (!scheduleUuid) return;
@@ -40,13 +32,16 @@ export const useUpdateAvailability = ({
         const res = await fetch(
           `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}/with-availabilities`,
         );
-        if (!res.ok) throw new Error("API error: " + res.status);
+        if (!res.ok)
+          throw new Error(
+            "バックエンドからデータを取得する際にエラーが発生しました: " +
+              res.status,
+          );
 
         const data: ApiScheduleWithAvailabilities = await res.json();
 
         setScheduleTimeslots(data.schedule_timeslots);
 
-        // overlays に変換
         const loadedOverlays = data.availabilities.flatMap((av) =>
           av.availability_timeslots
             .map((ts) => {
@@ -67,10 +62,20 @@ export const useUpdateAvailability = ({
         );
         setOverlays(loadedOverlays as Overlay[]);
 
-        // 名前一覧を state に保存
-        const apiNames = Array.from(
-          new Set(data.availabilities.map((av) => av.guest_user_name)),
-        ).sort((a, b) => a.localeCompare(b, "ja"));
+        const apiNames = data.availabilities
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime(),
+          )
+          .reduce<string[]>((acc, av) => {
+            if (!acc.includes(av.guest_user_name)) {
+              acc.push(av.guest_user_name);
+            }
+            return acc;
+          }, []);
+
         if (apiNames.length > 0) {
           setNames(apiNames);
         }
@@ -120,7 +125,6 @@ export const useUpdateAvailability = ({
     ? buildDayBlocks(scheduleUuid, scheduleTimeslots)
     : [];
 
-  // 名前を設定する関数
   const addOrUpdateMyName = (name: string) => {
     const trimmed = name.trim();
     if (!trimmed) {
@@ -131,11 +135,10 @@ export const useUpdateAvailability = ({
       alert("この名前はすでに使われています");
       return;
     }
-    setMyName(trimmed); // 新規 or 上書き
-    setMyNameInput(""); // 入力欄はクリア
+    setMyName(trimmed);
+    setMyNameInput("");
   };
 
-  // 保存処理
   const handleSave = async () => {
     if (!myName) {
       alert("名前を入力してください");
@@ -147,7 +150,6 @@ export const useUpdateAvailability = ({
       return;
     }
 
-    // まとめる
     const payload = {
       guest_user_name: myName,
       schedule_uuid: scheduleUuid,
@@ -170,11 +172,13 @@ export const useUpdateAvailability = ({
         },
       );
 
-      if (!res.ok) throw new Error("API error: " + res.status);
+      if (!res.ok)
+        throw new Error(
+          "Aバックエンドにデータを保存する際にエラーが発生しました: " +
+            res.status,
+        );
       const data = await res.json();
       console.log("保存成功", data);
-
-      // 保存できたら pendingOverlays をクリア
       setPendingOverlays([]);
     } catch (err) {
       console.error("保存失敗", err);
@@ -185,9 +189,9 @@ export const useUpdateAvailability = ({
   const handleCellMouseDown = (
     name: string,
     h: Date,
-    dateKey: string,
-    scheduleUuid: string,
-    timeslotId: number,
+    date: string,
+    schedule_uuid: string,
+    schedule_timeslot_id: number,
   ) => {
     if (!myName) {
       alert("先に自分の名前を追加してください");
@@ -196,12 +200,12 @@ export const useUpdateAvailability = ({
     }
     setIsDragging(true);
     setSelectedOverlay({
+      schedule_uuid,
+      schedule_timeslot_id,
+      date,
       name,
-      start: h,
-      end: h,
-      dateKey,
-      scheduleUuid,
-      timeslotId,
+      start: h.toISOString(),
+      end: h.toISOString(),
     });
     console.log("=== 開始時間 ===", h);
   };
@@ -210,22 +214,24 @@ export const useUpdateAvailability = ({
   const handleCellMouseEnter = (
     name: string,
     h: Date,
-    scheduleUuid: string,
-    dayStart: Date,
-    dayEnd: Date,
+    schedule_uuid: string,
+    start: Date,
+    end: Date,
   ) => {
     if (
       isDragging &&
       selectedOverlay?.name === name &&
-      selectedOverlay?.scheduleUuid === scheduleUuid
+      selectedOverlay?.schedule_uuid === schedule_uuid
     ) {
       // 範囲外なら dayStart/dayEnd にクランプ
       const t = h.getTime();
-      const lo = dayStart.getTime();
-      const hi = dayEnd.getTime();
+      const lo = start.getTime();
+      const hi = end.getTime();
       const clamped = new Date(Math.max(lo, Math.min(t, hi)));
 
-      setSelectedOverlay((prev) => (prev ? { ...prev, end: clamped } : null));
+      setSelectedOverlay((prev: Overlay | null) =>
+        prev ? { ...prev, end: clamped.toISOString() } : null,
+      );
     }
   };
 
@@ -236,15 +242,15 @@ export const useUpdateAvailability = ({
       if (selectedOverlay) {
         const start = selectedOverlay!.start;
         const end = selectedOverlay!.end;
-        setPendingOverlays((prev) => [
+        setPendingOverlays((prev: Overlay[]) => [
           ...prev,
           {
-            schedule_uuid: selectedOverlay.scheduleUuid,
-            schedule_timeslot_id: selectedOverlay.timeslotId,
-            date: selectedOverlay.dateKey,
+            schedule_uuid: selectedOverlay.schedule_uuid,
+            schedule_timeslot_id: selectedOverlay.schedule_timeslot_id,
+            date: selectedOverlay.date,
             name: myName!,
-            start: toLocalISOString(start),
-            end: toLocalISOString(end),
+            start: toLocalISOString(new Date(selectedOverlay.start)),
+            end: toLocalISOString(new Date(selectedOverlay.end)),
           },
         ]);
         setSelectedOverlay(null);
@@ -258,7 +264,7 @@ export const useUpdateAvailability = ({
   // myName が変わったら pendingOverlays の名前を更新
   useEffect(() => {
     if (!myName) return;
-    setPendingOverlays((prev) =>
+    setPendingOverlays((prev: Overlay[]) =>
       prev.map((o) => ({
         ...o,
         name: myName,
