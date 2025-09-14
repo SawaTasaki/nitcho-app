@@ -1,4 +1,3 @@
-// src/hooks/useAppContainer.ts
 import { useState, useEffect } from "react";
 import type { MainViewMode } from "../types/pages";
 
