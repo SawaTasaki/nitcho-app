@@ -201,20 +201,20 @@ export const useUpdateAvailability = ({
       alert("最後の一人は削除できません");
       return;
     }
-  
+
     const confirmed = window.confirm(
       `本当に「${targetName}」さんの予定を削除しますか？`,
     );
     if (!confirmed) return;
-  
+
     try {
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_ORIGIN}/availabilities/${availabilityId}?schedule_uuid=${scheduleUuid}`,
         { method: "DELETE" },
       );
-  
+
       if (!res.ok) throw new Error("削除失敗");
-  
+
       setParticipants((prev: Participant[]) =>
         prev.filter((p) => p.availability_id !== availabilityId),
       );
@@ -226,7 +226,6 @@ export const useUpdateAvailability = ({
       alert("削除に失敗しました");
     }
   };
-  
 
   // セルをクリックした時
   const handleCellMouseDown = (

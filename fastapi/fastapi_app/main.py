@@ -64,11 +64,7 @@ def read_schedule_with_availabilities(schedule_uuid: UUID, db: Session = Depends
 
 
 @app.delete("/availabilities/{availability_id}")
-def delete_availability_for_user(
-    availability_id: int,
-    schedule_uuid: UUID,
-    db: Session = Depends(get_db),
-):
+def delete_availability_for_user(availability_id: int, schedule_uuid: UUID, db: Session = Depends(get_db)):
     deleted_id = crud.delete_availability_with_schedule(db, availability_id, schedule_uuid)
     if deleted_id is None:
         raise HTTPException(status_code=404, detail="対象の可用性が見つかりませんでした。")

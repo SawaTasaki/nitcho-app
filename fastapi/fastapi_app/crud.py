@@ -86,14 +86,20 @@ def get_schedule_with_availabilities(db: Session, schedule_uuid):
 
 
 def delete_availability_with_schedule(db: Session, availability_id: int, schedule_uuid: UUID):
-    availability = (
-        db.query(models.Availability)
-        .filter(models.Availability.id == availability_id)
-        .filter(models.Availability.schedule_uuid == schedule_uuid)
-        .first()
-    )
-    if not availability:
-        return None
-    db.delete(availability)
-    db.commit()
-    return availability_id
+    try:
+        availability = (
+            db.query(models.Availability)
+            .filter(models.Availability.id == availability_id)
+            .filter(models.Availability.schedule_uuid == schedule_uuid)
+            .first()
+        )
+        if not availability:
+            return None
+
+        db.delete(availability)
+        db.commit()
+        return availability_id
+
+    except:
+        db.rollback()
+        raise
