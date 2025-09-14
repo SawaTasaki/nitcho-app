@@ -98,26 +98,19 @@ export const useUpdateAvailability = ({
     for (const slot of timeslots) {
       const start = new Date(slot.start_time);
       const end = new Date(slot.end_time);
-
-      const dateKey =
-        start.getFullYear() +
-        "-" +
-        String(start.getMonth() + 1).padStart(2, "0") +
-        "-" +
-        String(start.getDate()).padStart(2, "0");
-
       const hours = eachQuarterWithEnd(start, end);
 
       result.push({
         scheduleUuid,
         timeslotId: slot.id,
-        dateKey,
         date: start,
         hours,
       });
     }
 
     result.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    console.log("result", result);
     return result;
   }
 

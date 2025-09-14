@@ -125,7 +125,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                             handleCellMouseDown(
                               myName,
                               h,
-                              day.dateKey,
+                              formatDate(day.date),
                               day.scheduleUuid,
                               day.timeslotId,
                             )
@@ -154,6 +154,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                     o.schedule_timeslot_id === day.timeslotId,
                 )
                 .map((o: Overlay) => {
+                  const key = `${o.schedule_timeslot_id}-${o.name}-${o.start}-${o.end}`;
                   const CELL_HEIGHT = 56;
                   const start = new Date(o.start);
                   const end = new Date(o.end);
@@ -172,6 +173,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
                   return (
                     <div
+                      key={key}
                       className={[
                         "update-calendar__overlay",
                         o.name === myName
@@ -253,7 +255,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
               {/* 3. 今ドラッグ中（selectedOverlay、一時表示） */}
               {selectedOverlay &&
-                selectedOverlay.date === day.dateKey &&
+                selectedOverlay.date === formatDate(day.date) &&
                 (() => {
                   const CELL_HEIGHT = 56;
                   const start = new Date(selectedOverlay.start);
