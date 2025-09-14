@@ -20,11 +20,13 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
     handleCellMouseDown,
     handleCellMouseEnter,
     dayBlocks,
+    error,
   } = useUpdateAvailability({ scheduleUuid });
 
   const CELL_WIDTH = 120;
 
   if (loading) return <div>読み込み中...</div>;
+  if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   return (
     <div className="update-calendar">
