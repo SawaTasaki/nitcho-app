@@ -129,7 +129,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                       }
                     >
                       {participants.map((p: Participant) => (
-                        <td key={p.availability_id + "-" + h.toISOString()} />
+                        <td key={p.availability_id} />
                       ))}
 
                       {/* ✅ 自分の列 */}
