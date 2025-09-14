@@ -61,3 +61,11 @@ def read_schedule_with_availabilities(schedule_uuid: UUID, db: Session = Depends
     if not db_schedule:
         raise HTTPException(status_code=404, detail="そのUUIDのスケジュールは見つかりませんでした。")
     return db_schedule
+
+
+@app.delete("/availabilities/{availability_id}")
+def delete_availability(availability_id: int, db: Session = Depends(get_db)):
+    deleted_id = crud.delete_availability(db, availability_id)
+    if deleted_id is None:
+        raise HTTPException(status_code=404, detail="可用性が見つかりませんでした。")
+    return {"message": "Availability deleted", "id": deleted_id}
