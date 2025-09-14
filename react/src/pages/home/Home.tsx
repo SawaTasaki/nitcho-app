@@ -1,16 +1,8 @@
-import { useState } from "react";
-import type { HomeProps } from "../types/pages";
+import type { HomeProps } from "../../types/pages";
+import { useHome } from "./useHome";
 
-export function Home({ goCreate, goUpdate, onOpenUrl }: HomeProps) {
-  const [url, setUrl] = useState("");
-
-  const handleOpen = () => {
-    if (onOpenUrl) {
-      onOpenUrl(url);
-    } else {
-      goUpdate();
-    }
-  };
+export function Home({ goCreate, onOpenUrl }: HomeProps) {
+  const { url, setUrl, handleOpen } = useHome(onOpenUrl);
 
   return (
     <div className="home">

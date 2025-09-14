@@ -1,4 +1,4 @@
-import { Home } from "./Home";
+import { Home } from "./home/Home";
 import { CreateCalendar } from "./create-calendar/CreateCalendar";
 import { CreateCalendarSuccess } from "./create-calendar-success/CreateCalendarSuccess";
 import { UpdateAvailability } from "./update-availability/UpdateAvailability";
@@ -51,7 +51,6 @@ export function MainView({
       content = (
         <Home
           goCreate={onRequestCreate}
-          goUpdate={onUpdateAvailability}
           onOpenUrl={onOpenUrl}
         />
       );
