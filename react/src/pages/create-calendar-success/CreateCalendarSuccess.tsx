@@ -1,22 +1,11 @@
-import { useState } from "react";
-import type { CreateCalendarSuccessProps } from "../types/pages";
+import type { CreateCalendarSuccessProps } from "../../types/pages";
+import { useCreateCalendarSuccess } from "./useCreateCalendarSuccess";
 
 export function CreateCalendarSuccess({
   createdCalendarUrl,
   onUpdateAvailability,
 }: CreateCalendarSuccessProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(createdCalendarUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // 2秒後にリセット
-    } catch (err) {
-      console.log(err);
-      alert("コピーに失敗しました");
-    }
-  };
+  const { copied, handleCopy } = useCreateCalendarSuccess(createdCalendarUrl);
 
   return (
     <div className="create-calendar-success">
