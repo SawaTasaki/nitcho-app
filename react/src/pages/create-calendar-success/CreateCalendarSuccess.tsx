@@ -3,9 +3,12 @@ import { useCreateCalendarSuccess } from "./useCreateCalendarSuccess";
 
 export function CreateCalendarSuccess({
   createdCalendarUrl,
-  onUpdateAvailability,
+  onOpenUrl,
 }: CreateCalendarSuccessProps) {
-  const { copied, handleCopy } = useCreateCalendarSuccess(createdCalendarUrl);
+  const { copied, handleCopy, handleOpen } = useCreateCalendarSuccess({
+    createdCalendarUrl,
+    onOpenUrl,
+  });
 
   return (
     <div className="create-calendar-success">
@@ -19,7 +22,7 @@ export function CreateCalendarSuccess({
         <button className="btn btn--primary" onClick={handleCopy}>
           {copied ? "コピーしました！" : "カレンダーをコピーしてシェアする"}
         </button>
-        <button className="btn btn--ghost" onClick={onUpdateAvailability}>
+        <button className="btn btn--ghost" onClick={handleOpen}>
           カレンダーに予定を入れる
         </button>
       </div>

@@ -9,7 +9,6 @@ export function AppContainer() {
     scheduleUuid,
     createdCalendarUrl,
     handleRequestCreate,
-    handleUpdateAvailability,
     handleCreateCalendarSuccess,
     handleOpenUrl,
   } = useAppContainer();
@@ -27,7 +26,6 @@ export function AppContainer() {
         <MainView
           mode={mode}
           onRequestCreate={handleRequestCreate}
-          onUpdateAvailability={handleUpdateAvailability}
           onCreateCalendarSuccess={handleCreateCalendarSuccess}
           onOpenUrl={handleOpenUrl}
           createdCalendarUrl={createdCalendarUrl}

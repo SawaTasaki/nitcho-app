@@ -11,13 +11,12 @@ export type HeaderProps = {
 
 export type HomeProps = {
   readonly goCreate: () => void;
-  readonly onOpenUrl?: (url: string) => void;
+  readonly onOpenUrl: (url: string) => void;
 };
 
 export type MainViewProps = {
   readonly mode: MainViewMode | null;
   readonly onRequestCreate: () => void;
-  readonly onUpdateAvailability: () => void;
   readonly onCreateCalendarSuccess: (url: string) => void;
   readonly createdCalendarUrl?: string;
   readonly scheduleUuid?: string;
@@ -41,7 +40,7 @@ export type CreateCalendarProps = {
 
 export type CreateCalendarSuccessProps = {
   createdCalendarUrl: string;
-  onUpdateAvailability: () => void;
+  readonly onOpenUrl: (url: string) => void;
 };
 
 export type SavedTimeslot = {
