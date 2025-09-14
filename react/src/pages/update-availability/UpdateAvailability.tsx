@@ -133,13 +133,14 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                             )
                           }
                           onMouseEnter={() =>
-                            handleCellMouseEnter(
-                              myName,
-                              h,
-                              day.scheduleUuid,
-                              day.hours[0],
-                              day.hours[day.hours.length - 1],
-                            )
+                            handleCellMouseEnter({
+                              name: myName,
+                              h: h,
+                              schedule_uuid: day.scheduleUuid,
+                              schedule_timeslot_id: day.timeslotId,
+                              start: day.hours[0],
+                              end: day.hours[day.hours.length - 1],
+                            })
                           }
                         />
                       )}

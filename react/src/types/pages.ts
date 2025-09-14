@@ -115,3 +115,12 @@ export type DayBlock = {
 export type UpdateAvailabilityProps = {
   scheduleUuid: string | null;
 };
+
+export type HandleCellMouseEnterArgs = {
+  name: string;
+  h: Date;
+  schedule_uuid: string;
+  schedule_timeslot_id: number;
+  start: Date;
+  end: Date;
+};
