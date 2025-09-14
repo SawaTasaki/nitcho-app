@@ -11,6 +11,7 @@ export function MainView({
   onCreateCalendarSuccess,
   createdCalendarUrl,
   scheduleUuid,
+  onOpenUrl,
 }: MainViewProps) {
   if (scheduleUuid) {
     return (
@@ -48,7 +49,11 @@ export function MainView({
     case "home":
     default:
       content = (
-        <Home goCreate={onRequestCreate} goUpdate={onUpdateAvailability} />
+        <Home
+          goCreate={onRequestCreate}
+          goUpdate={onUpdateAvailability}
+          onOpenUrl={onOpenUrl}
+        />
       );
       break;
   }
