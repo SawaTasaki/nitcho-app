@@ -28,18 +28,22 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
   return (
     <div className="update-calendar">
-      <button onClick={handleSave}>保存</button>
-      {/* ✅ 常に表示する */}
+      <button className="btn btn--primary" onClick={handleSave}>
+        カレンダーを確定
+      </button>
       <div className="update-calendar__name-input-block">
         <input
           type="text"
           value={myNameInput}
           onChange={(e) => setMyNameInput(e.target.value)}
           placeholder="自分の名前を入力"
-          className="update-calendar__name-input"
+          className="input update-calendar__name-input"
         />
-        <button onClick={() => addOrUpdateMyName(myNameInput)}>
-          {myName ? "名前を変更" : "追加"}
+        <button
+          className="btn btn--ghost"
+          onClick={() => addOrUpdateMyName(myNameInput)}
+        >
+          {myName ? "名前を変更" : "名前を入力"}
         </button>
       </div>
 
@@ -236,7 +240,8 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                           prev.filter(
                             (p) =>
                               !(
-                                p.schedule_timeslot_id === o.schedule_timeslot_id &&
+                                p.schedule_timeslot_id ===
+                                  o.schedule_timeslot_id &&
                                 p.name === o.name &&
                                 p.start === o.start &&
                                 p.end === o.end
