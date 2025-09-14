@@ -124,3 +124,8 @@ export type HandleCellMouseEnterArgs = {
   start: Date;
   end: Date;
 };
+
+export type Participant = {
+  availability_id: number;
+  name: string;
+};
