@@ -55,4 +55,3 @@ export function MainView({
 
   return <main className="main-view">{content}</main>;
 }
-

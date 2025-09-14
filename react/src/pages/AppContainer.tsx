@@ -21,17 +21,17 @@ export function AppContainer() {
       <Header title="日程調整" onClickTitle={() => setMode(null)} />
 
       <div className="app-container__main">
-      <MainView
-  mode={mode}
-  onRequestCreate={() => setMode("create")}
-  onUpdateAvailability={() => setMode("update-availability")}
-  onCreateCalendarSuccess={(url: string) => {
-    setCreatedCalendarUrl(url);
-    setMode("create-calendar-success");
-  }}
-  createdCalendarUrl={createdCalendarUrl}
-  scheduleUuid={scheduleUuid}
-/>
+        <MainView
+          mode={mode}
+          onRequestCreate={() => setMode("create")}
+          onUpdateAvailability={() => setMode("update-availability")}
+          onCreateCalendarSuccess={(url: string) => {
+            setCreatedCalendarUrl(url);
+            setMode("create-calendar-success");
+          }}
+          createdCalendarUrl={createdCalendarUrl}
+          scheduleUuid={scheduleUuid}
+        />
       </div>
     </div>
   );

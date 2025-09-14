@@ -1,4 +1,4 @@
-export type MainViewMode = 
+export type MainViewMode =
   | "home"
   | "create"
   | "update-availability"
