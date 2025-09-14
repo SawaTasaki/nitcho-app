@@ -23,11 +23,11 @@ export function AppContainer() {
       <div className="app-container__main">
         <MainView
           mode={mode}
-          onRequestCreate={() => setMode(MainViewMode.Create)}
-          onUpdateAvailability={() => setMode(MainViewMode.UpdateAvailability)}
+          onRequestCreate={() => setMode("create")}
+          onUpdateAvailability={() => setMode("update-availability")}
           onCreateCalendarSuccess={(url: string) => {
             setCreatedCalendarUrl(url);
-            setMode(MainViewMode.CreateCalendarSuccess);
+            setMode("create-calendar-success");
           }}
           createdCalendarUrl={createdCalendarUrl}
           scheduleUuid={scheduleUuid}

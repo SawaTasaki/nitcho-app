@@ -1,5 +1,5 @@
-export enum MainViewMode {
-  Create = "create",
-  UpdateAvailability = "update-availability",
-  CreateCalendarSuccess = "create-calendar-success",
-}
+export type MainViewMode =
+  | "home"
+  | "create"
+  | "update-availability"
+  | "create-calendar-success";
