@@ -45,9 +45,8 @@ export function CreateCalendar({
 
       <form id="calendar-form" onSubmit={handleSave} className="calendar__form">
         <div className="calendar__title-field">
-          <div className="calendar__label">タイトル</div>
           <input
-            className="calendar__title-input"
+            className="calendar__input"
             type="text"
             placeholder="スケジュールのタイトルを入力"
             value={title}
