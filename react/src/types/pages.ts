@@ -1,4 +1,8 @@
-import type { MainViewMode } from "./pagesEnum";
+export type MainViewMode =
+  | "home"
+  | "create"
+  | "update-availability"
+  | "create-calendar-success";
 
 export type HeaderProps = {
   readonly title: string;

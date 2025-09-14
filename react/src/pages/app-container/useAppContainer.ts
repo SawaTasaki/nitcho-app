@@ -1,6 +1,6 @@
 // src/hooks/useAppContainer.ts
 import { useState, useEffect } from "react";
-import type { MainViewMode } from "../types/pagesEnum";
+import type { MainViewMode } from "../types/pages";
 
 export function useAppContainer() {
   const [mode, setMode] = useState<MainViewMode | null>(null);
