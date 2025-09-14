@@ -3,7 +3,6 @@ import { CreateCalendar } from "./create-calendar/CreateCalendar";
 import { CreateCalendarSuccess } from "./create-calendar-success/CreateCalendarSuccess";
 import { UpdateAvailability } from "./update-availability/UpdateAvailability";
 import type { MainViewProps } from "../types/pages";
-import { MainViewMode } from "../types/pagesEnum";
 
 export function MainView({
   mode,
@@ -13,13 +12,23 @@ export function MainView({
   createdCalendarUrl,
   scheduleUuid,
 }: MainViewProps) {
-  return (
-    <main className="main-view">
-      {scheduleUuid ? (
+  if (scheduleUuid) {
+    return (
+      <main className="main-view">
         <UpdateAvailability scheduleUuid={scheduleUuid} />
-      ) : mode === MainViewMode.Create ? (
+      </main>
+    );
+  }
+
+  let content: JSX.Element;
+  switch (mode) {
+    case "create":
+      content = (
         <CreateCalendar onCreateCalendarSuccess={onCreateCalendarSuccess} />
-      ) : mode === MainViewMode.CreateCalendarSuccess ? (
+      );
+      break;
+    case "create-calendar-success":
+      content = (
         <CreateCalendarSuccess
           createdCalendarUrl={
             createdCalendarUrl ??
@@ -27,9 +36,23 @@ export function MainView({
           }
           onUpdateAvailability={onUpdateAvailability}
         />
-      ) : (
+      );
+      break;
+    case "update-availability":
+      content = (
+        <UpdateAvailability
+          scheduleUuid={scheduleUuid ?? "エラー: scheduleUuid が null"}
+        />
+      );
+      break;
+    case "home":
+    default:
+      content = (
         <Home goCreate={onRequestCreate} goUpdate={onUpdateAvailability} />
-      )}
-    </main>
-  );
+      );
+      break;
+  }
+
+  return <main className="main-view">{content}</main>;
 }
+
