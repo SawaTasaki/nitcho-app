@@ -18,8 +18,6 @@ export function useAppContainer() {
   // ハンドラ群
   const handleRequestCreate = () => setMode("create");
 
-  const handleUpdateAvailability = () => setMode("update-availability");
-
   const handleCreateCalendarSuccess = (url: string) => {
     setCreatedCalendarUrl(url);
     setMode("create-calendar-success");
@@ -44,7 +42,6 @@ export function useAppContainer() {
     scheduleUuid,
     createdCalendarUrl,
     handleRequestCreate,
-    handleUpdateAvailability,
     handleCreateCalendarSuccess,
     handleOpenUrl,
   };

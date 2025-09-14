@@ -1,7 +1,17 @@
 import { useState } from "react";
+import type { CreateCalendarSuccessProps } from "../../types/pages";
 
-export function useCreateCalendarSuccess(createdCalendarUrl: string) {
+export function useCreateCalendarSuccess({
+  createdCalendarUrl,
+  onOpenUrl,
+}: CreateCalendarSuccessProps) {
   const [copied, setCopied] = useState(false);
+
+  const handleOpen = () => {
+    if (onOpenUrl) {
+      onOpenUrl(createdCalendarUrl);
+    }
+  };
 
   const handleCopy = async () => {
     try {
@@ -14,5 +24,5 @@ export function useCreateCalendarSuccess(createdCalendarUrl: string) {
     }
   };
 
-  return { copied, handleCopy };
+  return { copied, handleCopy, handleOpen };
 }

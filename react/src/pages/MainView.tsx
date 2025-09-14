@@ -7,7 +7,6 @@ import type { MainViewProps } from "../types/pages";
 export function MainView({
   mode,
   onRequestCreate,
-  onUpdateAvailability,
   onCreateCalendarSuccess,
   createdCalendarUrl,
   scheduleUuid,
@@ -35,7 +34,7 @@ export function MainView({
             createdCalendarUrl ??
             "URL初期値(これが表示されている場合エラーです MainView)"
           }
-          onUpdateAvailability={onUpdateAvailability}
+          onOpenUrl={onOpenUrl}
         />
       );
       break;

@@ -221,7 +221,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
                   return (
                     <div
-                    key={`${o.schedule_timeslot_id}-${o.name}-${o.start}-${o.end}`}
+                      key={`${o.schedule_timeslot_id}-${o.name}-${o.start}-${o.end}`}
                       className={[
                         "update-calendar__overlay",
                         isDragging ? "update-calendar__overlay--no-pe" : "",

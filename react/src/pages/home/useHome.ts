@@ -1,7 +1,6 @@
 import { useState } from "react";
-import type { HomeProps } from "../../types/pages";
 
-export function useHome(onOpenUrl: HomeProps["onOpenUrl"]) {
+export function useHome(onOpenUrl?: (url: string) => void) {
   const [url, setUrl] = useState("");
 
   const handleOpen = () => {
