@@ -109,7 +109,6 @@ export type ApiScheduleWithAvailabilities = {
 export type DayBlock = {
   scheduleUuid: string;
   timeslotId: number;
-  dateKey: string;
   date: Date;
   hours: Date[];
 };

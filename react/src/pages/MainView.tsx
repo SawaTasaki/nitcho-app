@@ -48,12 +48,7 @@ export function MainView({
       break;
     case "home":
     default:
-      content = (
-        <Home
-          goCreate={onRequestCreate}
-          onOpenUrl={onOpenUrl}
-        />
-      );
+      content = <Home goCreate={onRequestCreate} onOpenUrl={onOpenUrl} />;
       break;
   }
 
