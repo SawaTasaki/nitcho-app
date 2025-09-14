@@ -6,6 +6,7 @@ import type {
   DayBlock,
   ApiScheduleTimeslot,
   ScheduleTimeslot,
+  HandleCellMouseEnterArgs,
 } from "../../types/pages";
 import { toLocalISOString, eachQuarterWithEnd } from "@/utils/datetime";
 
@@ -216,19 +217,21 @@ export const useUpdateAvailability = ({
   };
 
   // セルにドラッグで入った時
-  const handleCellMouseEnter = (
-    name: string,
-    h: Date,
-    schedule_uuid: string,
-    start: Date,
-    end: Date,
-  ) => {
+  const handleCellMouseEnter = ({
+    name,
+    h,
+    schedule_uuid,
+    schedule_timeslot_id,
+    start,
+    end,
+  }: HandleCellMouseEnterArgs) => {
     if (
       isDragging &&
       selectedOverlay?.name === name &&
-      selectedOverlay?.schedule_uuid === schedule_uuid
+      selectedOverlay?.schedule_uuid === schedule_uuid &&
+      selectedOverlay?.schedule_timeslot_id === schedule_timeslot_id // ← 追加
     ) {
-      // 範囲外なら dayStart/dayEnd にクランプ
+      // 範囲内に収める
       const t = h.getTime();
       const lo = start.getTime();
       const hi = end.getTime();
