@@ -172,22 +172,22 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
                   return (
                     <div
-  className={[
-    "update-calendar__overlay",
-    o.name === myName
-      ? "update-calendar__overlay--mine"
-      : "update-calendar__overlay--others",
-    isDragging ? "update-calendar__overlay--no-pe" : "",
-  ]
-    .filter(Boolean)
-    .join(" ")}
-  style={{
-    top,
-    left: personIndex * CELL_WIDTH,
-    height,
-    width: CELL_WIDTH,
-  }}
-/>
+                      className={[
+                        "update-calendar__overlay",
+                        o.name === myName
+                          ? "update-calendar__overlay--mine"
+                          : "update-calendar__overlay--others",
+                        isDragging ? "update-calendar__overlay--no-pe" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      style={{
+                        top,
+                        left: personIndex * CELL_WIDTH,
+                        height,
+                        width: CELL_WIDTH,
+                      }}
+                    />
                   );
                 })}
 
