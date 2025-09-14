@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { FormEvent } from "react";
 import type {
   Row,
   TimeslotPayload,
@@ -16,7 +17,7 @@ export const useCreateCalendar = ({
 
   // 指定した行のフィールド値を更新する関数
   const handleChange = (index: number, key: keyof Row, value: string) => {
-    setRows((prev) => {
+    setRows((prev: Row[]) => {
       const next = [...prev];
       next[index] = { ...next[index], [key]: value };
       return next;
@@ -25,7 +26,7 @@ export const useCreateCalendar = ({
 
   // 最終行の日付の翌日を自動入力した新しい行を追加する関数
   const handleAdd = () => {
-    setRows((prev) => {
+    setRows((prev: Row[]) => {
       const last = prev[prev.length - 1] || { date: "", start: "", end: "" };
       const nextRow: Row = {
         date: addDays(last.date, 1),
@@ -38,7 +39,7 @@ export const useCreateCalendar = ({
 
   // 指定した行を削除する関数（最低1行は必ず残す）
   const handleDelete = (index: number) => {
-    setRows((prev) => {
+    setRows((prev: Row[]) => {
       if (prev.length <= 1) return prev;
       return prev.filter((_, i) => i !== index);
     });
@@ -68,7 +69,7 @@ export const useCreateCalendar = ({
   };
 
   // 入力行を検証・整形してバックエンド送信し、結果をユーザーに通知する関数
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = async (e: FormEvent) => {
     e.preventDefault();
 
     // タイトル必須チェック
@@ -78,13 +79,13 @@ export const useCreateCalendar = ({
     }
 
     // 1) 入力済み行のみ抽出
-    const filled = rows.filter((r) => r.date && r.start && r.end);
+    const filled = rows.filter((r: Row) => r.date && r.start && r.end);
 
     // 2) 時間が逆の行は無視
-    const valid = filled.filter((r) => isTimeOrderValid(r.start, r.end));
+    const valid = filled.filter((r: Row) => isTimeOrderValid(r.start, r.end));
 
     // 3) ペイロード生成
-    const timeslots: TimeslotPayload[] = valid.map((r) => ({
+    const timeslots: TimeslotPayload[] = valid.map((r: Row) => ({
       start_time: toDateTimeString(r.date, r.start),
       end_time: toDateTimeString(r.date, r.end),
     }));
