@@ -172,24 +172,22 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
                   return (
                     <div
-                      key={`${o.schedule_timeslot_id}-${o.name}-${o.start}-${o.end}`}
-                      className={[
-                        "update-calendar__overlay",
-                        isDragging ? "update-calendar__overlay--no-pe" : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      style={{
-                        top,
-                        left: personIndex * CELL_WIDTH,
-                        height,
-                        width: CELL_WIDTH,
-                        backgroundColor:
-                          o.name === myName
-                            ? "rgba(255, 165, 0, 0.5)" // 自分はオレンジ
-                            : "rgba(0, 0, 255, 0.5)", // 他人は青
-                      }}
-                    />
+  className={[
+    "update-calendar__overlay",
+    o.name === myName
+      ? "update-calendar__overlay--mine"
+      : "update-calendar__overlay--others",
+    isDragging ? "update-calendar__overlay--no-pe" : "",
+  ]
+    .filter(Boolean)
+    .join(" ")}
+  style={{
+    top,
+    left: personIndex * CELL_WIDTH,
+    height,
+    width: CELL_WIDTH,
+  }}
+/>
                   );
                 })}
 
