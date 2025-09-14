@@ -21,6 +21,7 @@ export type MainViewProps = {
   readonly onCreateCalendarSuccess: (url: string) => void;
   readonly createdCalendarUrl?: string;
   readonly scheduleUuid?: string;
+  readonly onOpenUrl: (url: string) => void;
 };
 
 export type Row = {
