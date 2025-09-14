@@ -18,7 +18,12 @@ export function AppContainer() {
 
   return (
     <div className="app-container">
-      <Header title="日程調整" onClickTitle={() => setMode(null)} />
+      <Header
+        title="日程調整"
+        onClickTitle={() => {
+          window.location.href = "/";
+        }}
+      />
 
       <div className="app-container__main">
         <MainView
