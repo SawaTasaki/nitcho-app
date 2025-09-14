@@ -162,7 +162,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                   const slotIndex = Math.round(
                     startOffsetMs / (1000 * 60 * 15),
                   );
-                  const top = 27 + (slotIndex * CELL_HEIGHT) / 4;
+                  const top = 25 + (slotIndex * CELL_HEIGHT) / 4;
                   const durationInMs = end.getTime() - start.getTime();
                   const height =
                     (durationInMs / (1000 * 60 * 60)) * CELL_HEIGHT;
@@ -204,7 +204,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                   const startOffsetMin = startOffsetMs / (1000 * 60);
 
                   const slotIndex = Math.round(startOffsetMin / 15);
-                  const top = 27 + (slotIndex * CELL_HEIGHT) / 4;
+                  const top = 25 + (slotIndex * CELL_HEIGHT) / 4;
 
                   const durationInMs = end.getTime() - start.getTime();
                   const height =
@@ -263,7 +263,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                     start.getTime() - day.hours[0].getTime();
                   const startOffsetMin = startOffsetMs / (1000 * 60);
                   const slotIndex = Math.round(startOffsetMin / 15);
-                  const top = 27 + (slotIndex * CELL_HEIGHT) / 4;
+                  const top = 25 + (slotIndex * CELL_HEIGHT) / 4;
 
                   const durationInMs = end.getTime() - start.getTime();
                   const height =
