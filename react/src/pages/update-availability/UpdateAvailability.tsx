@@ -1,6 +1,6 @@
 import React from "react";
 import { useUpdateAvailability } from "./useUpdateAvailability";
-import type { UpdateAvailabilityProps } from "../types/pages";
+import type { Overlay, UpdateAvailabilityProps } from "../types/pages";
 import { formatDate, formatHour } from "@/utils/datetime";
 
 export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
@@ -79,7 +79,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
               >
                 <thead>
                   <tr>
-                    {names.map((n) => (
+                    {names.map((n: string) => (
                       <th key={n}>{n}</th>
                     ))}
                     {myName && <th>{myName}</th>}
@@ -113,7 +113,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                           : undefined
                       }
                     >
-                      {names.map((n) => (
+                      {names.map((n: string) => (
                         <td key={n + h.toISOString()} />
                       ))}
 
@@ -149,11 +149,11 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
               {/* 1. 既存 overlays（青 or 自分だけオレンジ） */}
               {overlays
                 .filter(
-                  (o) =>
+                  (o: Overlay) =>
                     o.schedule_uuid === day.scheduleUuid &&
                     o.schedule_timeslot_id === day.timeslotId,
                 )
-                .map((o, i) => {
+                .map((o: Overlay) => {
                   const CELL_HEIGHT = 56;
                   const start = new Date(o.start);
                   const end = new Date(o.end);
@@ -193,8 +193,8 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
               {/* 2. pendingOverlays（全部オレンジで表示） */}
               {pendingOverlays
-                .filter((o) => o.schedule_uuid === day.scheduleUuid)
-                .map((o) => {
+                .filter((o: Overlay) => o.schedule_uuid === day.scheduleUuid)
+                .map((o: Overlay) => {
                   const CELL_HEIGHT = 56;
                   const start = new Date(o.start);
                   const end = new Date(o.end);
