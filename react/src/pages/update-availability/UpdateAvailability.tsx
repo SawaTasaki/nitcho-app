@@ -89,7 +89,11 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                         <button
                           className="update-calendar__delete-btn"
                           onClick={() =>
-                            handleDeleteName(p.name, p.availability_id)
+                            handleDeleteName(
+                              p.name,
+                              p.availability_id,
+                              scheduleUuid,
+                            )
                           }
                           aria-label={`${p.name}を削除`}
                         >
