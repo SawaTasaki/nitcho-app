@@ -23,20 +23,29 @@ export const useUpdateAvailability = ({
     ScheduleTimeslot[]
   >([]);
   const [selectedOverlay, setSelectedOverlay] = useState<Overlay | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchSchedule() {
       if (!scheduleUuid) return;
       try {
         setLoading(true);
+        setError(null);
+
         const res = await fetch(
           `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}/with-availabilities`,
         );
-        if (!res.ok)
-          throw new Error(
-            "バックエンドからデータを取得する際にエラーが発生しました: " +
-              res.status,
-          );
+
+        if (!res.ok) {
+          if (res.status === 404) {
+            setError("不正なURLです");
+          } else if (res.status === 422) {
+            setError("不正なURLです");
+          } else {
+            setError(`不正なURLです (${res.status})`);
+          }
+          return;
+        }
 
         const data: ApiScheduleWithAvailabilities = await res.json();
 
@@ -81,6 +90,7 @@ export const useUpdateAvailability = ({
         }
       } catch (err) {
         console.error(err);
+        setError("スケジュールの取得中にエラーが発生しました");
       } finally {
         setLoading(false);
       }
@@ -110,7 +120,6 @@ export const useUpdateAvailability = ({
 
     result.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    console.log("result", result);
     return result;
   }
 
@@ -284,5 +293,6 @@ export const useUpdateAvailability = ({
     handleCellMouseDown,
     handleCellMouseEnter,
     dayBlocks,
+    error,
   };
 };

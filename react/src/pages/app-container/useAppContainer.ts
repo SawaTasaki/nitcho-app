@@ -30,7 +30,7 @@ export function useAppContainer() {
       if (uuid) {
         window.location.href = url; // ← 遷移
       } else {
-        alert("URLに schedule-uuid が含まれていません");
+        alert("不正なURLです");
       }
     } catch {
       alert("不正なURLです");
