@@ -7,6 +7,7 @@ import type {
   ApiScheduleTimeslot,
   ScheduleTimeslot,
   HandleCellMouseEnterArgs,
+  Participant,
 } from "../../types/pages";
 import { toLocalISOString, eachQuarterWithEnd } from "@/utils/datetime";
 
@@ -15,7 +16,9 @@ export const useUpdateAvailability = ({
 }: UpdateAvailabilityProps) => {
   const [overlays, setOverlays] = useState<Overlay[]>([]);
   const [pendingOverlays, setPendingOverlays] = useState<Overlay[]>([]);
-  const [names, setNames] = useState<string[]>(["テストさん"]);
+  const [participants, setParticipants] = useState<Participant[]>([
+    { availability_id: -1, name: "テストさん" },
+  ]);
   const [myName, setMyName] = useState<string | null>(null);
   const [myNameInput, setMyNameInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -72,22 +75,20 @@ export const useUpdateAvailability = ({
         );
         setOverlays(loadedOverlays as Overlay[]);
 
-        const apiNames = data.availabilities
+        const apiParticipants: Participant[] = data.availabilities
           .slice()
           .sort(
             (a, b) =>
               new Date(a.created_at).getTime() -
               new Date(b.created_at).getTime(),
           )
-          .reduce<string[]>((acc, av) => {
-            if (!acc.includes(av.guest_user_name)) {
-              acc.push(av.guest_user_name);
-            }
-            return acc;
-          }, []);
+          .map((av) => ({
+            availability_id: av.id,
+            name: av.guest_user_name,
+          }));
 
-        if (apiNames.length > 0) {
-          setNames(apiNames);
+        if (apiParticipants.length > 0) {
+          setParticipants(apiParticipants);
         }
       } catch (err) {
         console.error(err);
@@ -134,7 +135,7 @@ export const useUpdateAvailability = ({
       alert("名前を入力してください");
       return;
     }
-    if (names.includes(trimmed)) {
+    if (participants.some((p: Participant) => p.name === trimmed)) {
       alert("この名前はすでに使われています");
       return;
     }
@@ -188,6 +189,34 @@ export const useUpdateAvailability = ({
       window.location.href = createdCalendarUrl;
     } catch (err) {
       console.error("保存失敗", err);
+    }
+  };
+
+  const handleDeleteName = async (
+    targetName: string,
+    availabilityId: number,
+  ) => {
+    if (participants.length <= 1) {
+      alert("最後の一人は削除できません");
+      return;
+    }
+    try {
+      // const res = await fetch(
+      //   `${import.meta.env.VITE_BACKEND_ORIGIN}/availabilities/${availabilityId}`,
+      //   { method: "DELETE" }
+      // );
+
+      // if (!res.ok) throw new Error("削除失敗");
+
+      setParticipants((prev: Participant[]) =>
+        prev.filter((p) => p.name !== targetName),
+      );
+      setOverlays((prev: Overlay[]) =>
+        prev.filter((o) => o.name !== targetName),
+      );
+    } catch (err) {
+      console.error(err);
+      alert("削除に失敗しました");
     }
   };
 
@@ -284,7 +313,7 @@ export const useUpdateAvailability = ({
     overlays,
     pendingOverlays,
     setPendingOverlays,
-    names,
+    participants,
     myName,
     myNameInput,
     setMyNameInput,
@@ -297,5 +326,6 @@ export const useUpdateAvailability = ({
     handleCellMouseEnter,
     dayBlocks,
     error,
+    handleDeleteName,
   };
 };

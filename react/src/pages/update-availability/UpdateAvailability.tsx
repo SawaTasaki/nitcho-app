@@ -2,13 +2,14 @@ import React from "react";
 import { useUpdateAvailability } from "./useUpdateAvailability";
 import type { Overlay, UpdateAvailabilityProps } from "../types/pages";
 import { formatDate, formatHour } from "@/utils/datetime";
+import type { Participant } from "../../types/pages";
 
 export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
   const {
     overlays,
     pendingOverlays,
     setPendingOverlays,
-    names,
+    participants,
     myName,
     myNameInput,
     setMyNameInput,
@@ -21,6 +22,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
     handleCellMouseEnter,
     dayBlocks,
     error,
+    handleDeleteName,
   } = useUpdateAvailability({ scheduleUuid });
 
   const CELL_WIDTH = 120;
@@ -76,13 +78,24 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
               <table
                 className="update-calendar__day-table"
                 style={{
-                  minWidth: `${(names.length + (myName ? 1 : 0)) * CELL_WIDTH}px`,
+                  minWidth: `${(participants.length + (myName ? 1 : 0)) * CELL_WIDTH}px`,
                 }}
               >
                 <thead>
                   <tr>
-                    {names.map((n: string) => (
-                      <th key={n}>{n}</th>
+                    {participants.map((p) => (
+                      <th key={p.availability_id}>
+                        {p.name}
+                        <button
+                          className="update-calendar__delete-btn"
+                          onClick={() =>
+                            handleDeleteName(p.name, p.availability_id)
+                          }
+                          aria-label={`${p.name}を削除`}
+                        >
+                          ❌
+                        </button>
+                      </th>
                     ))}
                     {myName && <th>{myName}</th>}
                   </tr>
@@ -115,8 +128,8 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                           : undefined
                       }
                     >
-                      {names.map((n: string) => (
-                        <td key={n + h.toISOString()} />
+                      {participants.map((p: Participant) => (
+                        <td key={p.availability_id + "-" + h.toISOString()} />
                       ))}
 
                       {/* ✅ 自分の列 */}
@@ -171,7 +184,11 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                   const height =
                     (durationInMs / (1000 * 60 * 60)) * CELL_HEIGHT;
                   const personIndex =
-                    o.name === myName ? names.length : names.indexOf(o.name);
+                    o.name === myName
+                      ? participants.length
+                      : participants.findIndex(
+                          (p: Participant) => p.name === o.name,
+                        );
                   if (personIndex === -1) return null;
 
                   return (
@@ -218,8 +235,10 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                   // 🔽 修正: myName の場合は右端の列
                   const personIndex =
                     myName && o.name === myName
-                      ? names.length
-                      : names.indexOf(o.name);
+                      ? participants.length
+                      : participants.findIndex(
+                          (p: Participant) => p.name === o.name,
+                        );
                   if (personIndex === -1) return null;
 
                   return (
@@ -276,8 +295,10 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
                   const personIndex =
                     selectedOverlay.name === myName
-                      ? names.length
-                      : names.indexOf(selectedOverlay.name);
+                      ? participants.length
+                      : participants.findIndex(
+                          (p: Participant) => p.name === selectedOverlay.name,
+                        );
                   if (personIndex === -1) return null;
 
                   return (
