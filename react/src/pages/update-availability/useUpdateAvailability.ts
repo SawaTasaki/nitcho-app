@@ -173,6 +173,9 @@ export const useUpdateAvailability = ({
       const data = await res.json();
       console.log("保存成功", data);
       setPendingOverlays([]);
+
+      const createdCalendarUrl = `${window.location.origin}/?schedule-uuid=${scheduleUuid}`;
+      window.location.href = createdCalendarUrl;
     } catch (err) {
       console.error("保存失敗", err);
     }
