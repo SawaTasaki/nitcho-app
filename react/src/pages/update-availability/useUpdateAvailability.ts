@@ -200,13 +200,19 @@ export const useUpdateAvailability = ({
       alert("最後の一人は削除できません");
       return;
     }
-    try {
-      // const res = await fetch(
-      //   `${import.meta.env.VITE_BACKEND_ORIGIN}/availabilities/${availabilityId}`,
-      //   { method: "DELETE" }
-      // );
 
-      // if (!res.ok) throw new Error("削除失敗");
+    const confirmed = window.confirm(
+      `本当に「${targetName}」さんの予定を削除しますか？`,
+    );
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_ORIGIN}/availabilities/${availabilityId}`,
+        { method: "DELETE" },
+      );
+
+      if (!res.ok) throw new Error("削除失敗");
 
       setParticipants((prev: Participant[]) =>
         prev.filter((p) => p.name !== targetName),
