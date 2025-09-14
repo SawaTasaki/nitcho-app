@@ -11,7 +11,6 @@ export type HeaderProps = {
 
 export type HomeProps = {
   readonly goCreate: () => void;
-  readonly goUpdate: () => void;
   readonly onOpenUrl?: (url: string) => void;
 };
 
