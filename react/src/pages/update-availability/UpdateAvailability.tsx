@@ -341,8 +341,10 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                 const durationInMs = end.getTime() - start.getTime();
                 const height = (durationInMs / (1000 * 60 * 60)) * CELL_HEIGHT;
 
-                const effectiveCount = participants.filter(p => p.name !== myName).length;
-const totalWidth = effectiveCount * CELL_WIDTH;
+                const effectiveCount = participants.filter(
+                  (p) => p.name !== myName,
+                ).length;
+                const totalWidth = effectiveCount * CELL_WIDTH;
 
                 return (
                   <div
