@@ -219,7 +219,11 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
 
               {/* 2. pendingOverlays（全部オレンジで表示） */}
               {pendingOverlays
-                .filter((o: Overlay) => o.schedule_uuid === day.scheduleUuid)
+                .filter(
+                  (o: Overlay) =>
+                    o.schedule_uuid === day.scheduleUuid &&
+                    o.schedule_timeslot_id === day.timeslotId,
+                )
                 .map((o: Overlay) => {
                   const CELL_HEIGHT = 56;
                   const start = new Date(o.start);
