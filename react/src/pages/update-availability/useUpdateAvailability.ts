@@ -236,11 +236,10 @@ export const useUpdateAvailability = ({
     overlays: Overlay[],
     participants: Participant[],
   ) {
-
     if (participants.length <= 1) {
       return {};
     }
-    
+
     const byDate: Record<string, Overlay[]> = {};
     overlays.forEach((o) => {
       const key = formatDate(new Date(o.date));
