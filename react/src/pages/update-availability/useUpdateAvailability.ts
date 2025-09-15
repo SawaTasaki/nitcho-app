@@ -237,8 +237,9 @@ export const useUpdateAvailability = ({
     participants: Participant[],
   ) {
     const byDate: Record<string, Overlay[]> = {};
-    overlays.forEach((o) => {
-      const key = formatDate(new Date(o.date)); // ←ここで統一
+    overlays
+    .forEach((o) => {
+      const key = formatDate(new Date(o.date));
       if (!byDate[key]) byDate[key] = [];
       byDate[key].push(o);
     });
