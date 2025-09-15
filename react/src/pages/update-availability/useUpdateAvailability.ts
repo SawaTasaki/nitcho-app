@@ -9,7 +9,12 @@ import type {
   HandleCellMouseEnterArgs,
   Participant,
 } from "../../types/pages";
-import { toLocalISOString, eachQuarterWithEnd } from "@/utils/datetime";
+import {
+  toLocalISOString,
+  eachQuarterWithEnd,
+  formatDate,
+  intersectIntervals,
+} from "@/utils/datetime";
 
 export const useUpdateAvailability = ({
   scheduleUuid,
@@ -227,6 +232,47 @@ export const useUpdateAvailability = ({
     }
   };
 
+  function getCommonAvailability(
+    overlays: Overlay[],
+    participants: Participant[],
+  ) {
+    const byDate: Record<string, Overlay[]> = {};
+    overlays.forEach((o) => {
+      const key = formatDate(new Date(o.date)); // ←ここで統一
+      if (!byDate[key]) byDate[key] = [];
+      byDate[key].push(o);
+    });
+
+    const results: Record<string, { start: Date; end: Date }[]> = {};
+
+    for (const date in byDate) {
+      const dayOverlays = byDate[date];
+
+      const grouped = participants.map((p) =>
+        dayOverlays
+          .filter((o) => o.name === p.name)
+          .map((o) => ({
+            start: new Date(o.start),
+            end: new Date(o.end),
+          })),
+      );
+
+      if (grouped.some((g) => g.length === 0)) continue;
+
+      let intersection = grouped[0];
+      for (let i = 1; i < grouped.length; i++) {
+        intersection = intersectIntervals(intersection, grouped[i]);
+        if (intersection.length === 0) break;
+      }
+
+      results[date] = intersection;
+    }
+
+    return results;
+  }
+
+  const commonAvailability = getCommonAvailability(overlays, participants);
+
   // セルをクリックした時
   const handleCellMouseDown = (
     name: string,
@@ -334,5 +380,6 @@ export const useUpdateAvailability = ({
     dayBlocks,
     error,
     handleDeleteName,
+    commonAvailability,
   };
 };

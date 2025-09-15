@@ -23,6 +23,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
     dayBlocks,
     error,
     handleDeleteName,
+    commonAvailability,
   } = useUpdateAvailability({ scheduleUuid });
 
   const CELL_WIDTH = 120;
@@ -166,7 +167,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                 </tbody>
               </table>
 
-              {/* 1. 既存 overlays（青 or 自分だけオレンジ） */}
+              {/* 1. 既存 overlays */}
               {overlays
                 .filter(
                   (o: Overlay) =>
@@ -217,7 +218,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                   );
                 })}
 
-              {/* 2. pendingOverlays（全部オレンジで表示） */}
+              {/* 2. pendingOverlays */}
               {pendingOverlays
                 .filter(
                   (o: Overlay) =>
@@ -327,6 +328,34 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                     />
                   );
                 })()}
+
+              {commonAvailability[formatDate(day.date)]?.map((slot, idx) => {
+                const CELL_HEIGHT = 56;
+                const start = new Date(slot.start);
+                const end = new Date(slot.end);
+
+                const startOffsetMs = start.getTime() - day.hours[0].getTime();
+                const slotIndex = Math.round(startOffsetMs / (1000 * 60 * 15));
+                const top = 25 + (slotIndex * CELL_HEIGHT) / 4;
+
+                const durationInMs = end.getTime() - start.getTime();
+                const height = (durationInMs / (1000 * 60 * 60)) * CELL_HEIGHT;
+
+                return (
+                  <div
+                    key={`common-${idx}`}
+                    className="update-calendar__overlay update-calendar__overlay--common"
+                    style={{
+                      position: "absolute",
+                      top,
+                      left: 0,
+                      width:
+                        (participants.length + (myName ? 1 : 0)) * CELL_WIDTH,
+                      height,
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

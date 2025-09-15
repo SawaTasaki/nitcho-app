@@ -170,8 +170,7 @@ body {
 .main-view {
   width: 100%;
   display: block;
-} 
-
+}
 
 .calendar {
   margin: 0 auto;
@@ -465,6 +464,12 @@ body {
 
 .update-calendar__error {
   color: red;
+}
+
+.update-calendar__overlay--common {
+  background-color: rgba(255, 105, 180, 0.4);
+  z-index: 999;
+  pointer-events: none;
 }
 
 .create-calendar-success {
