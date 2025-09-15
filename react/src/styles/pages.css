@@ -391,11 +391,15 @@ body {
 .update-calendar__overlay {
   position: absolute;
   border-radius: var(--btn-radius);
-  opacity: 0.9;
+  opacity: 0.5;
 }
 
 .update-calendar__overlay--mine, .update-calendar__overlay--pending {
-  background-color: rgba(255, 165, 0, 1); /* 自分: オレンジ */
+  background-color: rgba(255, 165, 0, 1);
+}
+
+.update-calendar__overlay--dragging {
+  background-color: rgba(255, 165, 0, 0.5);
 }
 
 .update-calendar__overlay--others {
@@ -457,6 +461,10 @@ body {
 
 .update-calendar__delete-btn:active {
   transform: scale(0.95);
+}
+
+.update-calendar__error {
+  color: red;
 }
 
 .create-calendar-success {
