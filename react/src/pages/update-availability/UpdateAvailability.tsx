@@ -28,7 +28,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
   const CELL_WIDTH = 120;
 
   if (loading) return <div>読み込み中...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
+  if (error) return <div className="update-calendar__error">{error}</div>;
 
   return (
     <div className="update-calendar">
@@ -97,7 +97,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                           }
                           aria-label={`${p.name}を削除`}
                         >
-                          ❌
+                          🗑️
                         </button>
                       </th>
                     ))}
@@ -254,6 +254,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                       key={`${o.schedule_timeslot_id}-${o.name}-${o.start}-${o.end}`}
                       className={[
                         "update-calendar__overlay",
+                        "update-calendar__overlay--pending",
                         isDragging ? "update-calendar__overlay--no-pe" : "",
                       ]
                         .filter(Boolean)
@@ -263,7 +264,6 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                         left: personIndex * CELL_WIDTH,
                         height,
                         width: CELL_WIDTH,
-                        backgroundColor: "rgba(255,165,0,0.7)", // オレンジ（未確定）
                       }}
                       onClick={() => {
                         setPendingOverlays((prev) =>
@@ -313,6 +313,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                     <div
                       className={[
                         "update-calendar__overlay",
+                        "update-calendar__overlay--dragging",
                         isDragging ? "update-calendar__overlay--no-pe" : "",
                       ]
                         .filter(Boolean)
@@ -322,7 +323,6 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
                         left: personIndex * CELL_WIDTH,
                         height,
                         width: CELL_WIDTH,
-                        backgroundColor: "rgba(255, 165, 0, 0.5)", // orange semi-transparent
                       }}
                     />
                   );
