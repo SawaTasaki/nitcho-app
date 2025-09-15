@@ -83,7 +83,7 @@ export function UpdateAvailability({ scheduleUuid }: UpdateAvailabilityProps) {
               >
                 <thead>
                   <tr>
-                    {participants.map((p) => (
+                    {participants.map((p: Participant) => (
                       <th key={p.availability_id}>
                         {p.name}
                         <button
