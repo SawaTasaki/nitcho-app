@@ -88,3 +88,30 @@ export const eachQuarterWithEnd = (start: Date, end: Date): Date[] => {
   }
   return times;
 };
+
+/**
+ * 2つの時間帯リストの重なり部分を計算して返す関数
+ *
+ * @param a - { start: Date; end: Date }[] 時間区間の配列
+ * @param b - { start: Date; end: Date }[] 時間区間の配列
+ * @returns 共通部分の時間区間配列
+ *
+ * 例:
+ * a = [{ start: 9:00, end: 12:00 }]
+ * b = [{ start: 10:00, end: 11:00 }]
+ * → [{ start: 10:00, end: 11:00 }]
+ */
+export const intersectIntervals = (
+  a: { start: Date; end: Date }[],
+  b: { start: Date; end: Date }[],
+): { start: Date; end: Date }[] => {
+  const res: { start: Date; end: Date }[] = [];
+  for (const x of a) {
+    for (const y of b) {
+      const start = new Date(Math.max(x.start.getTime(), y.start.getTime()));
+      const end = new Date(Math.min(x.end.getTime(), y.end.getTime()));
+      if (start < end) res.push({ start, end });
+    }
+  }
+  return res;
+};

@@ -170,8 +170,7 @@ body {
 .main-view {
   width: 100%;
   display: block;
-} 
-
+}
 
 .calendar {
   margin: 0 auto;
@@ -391,19 +390,19 @@ body {
 .update-calendar__overlay {
   position: absolute;
   border-radius: var(--btn-radius);
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .update-calendar__overlay--mine, .update-calendar__overlay--pending {
-  background-color: rgba(255, 165, 0, 1);
-}
-
-.update-calendar__overlay--dragging {
   background-color: rgba(255, 165, 0, 0.5);
 }
 
+.update-calendar__overlay--dragging {
+  background-color: rgba(255, 165, 0, 0.3);
+}
+
 .update-calendar__overlay--others {
-  background-color: var(--color-primary);
+  background-color: rgba(92, 177, 86, 0.5);
 }
 
 .update-calendar__day-table thead th {
@@ -465,6 +464,14 @@ body {
 
 .update-calendar__error {
   color: red;
+}
+
+.update-calendar__overlay--common {
+  background-color: transparent; /* ← 塗りつぶしやめる */
+  border: 3px solid orange;      /* ← オレンジの枠線 */
+  border-radius: var(--btn-radius);
+  z-index: 999;
+  pointer-events: none;
 }
 
 .create-calendar-success {
