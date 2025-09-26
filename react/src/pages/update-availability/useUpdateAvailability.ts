@@ -14,6 +14,7 @@ import {
   eachQuarterWithEnd,
   formatDate,
   intersectIntervals,
+  mergeOverlays,
 } from "@/utils/datetime";
 
 export const useUpdateAvailability = ({
@@ -334,21 +335,22 @@ export const useUpdateAvailability = ({
     const handleMouseUp = () => {
       setIsDragging(false);
       if (selectedOverlay) {
-        const start = selectedOverlay!.start;
-        const end = selectedOverlay!.end;
-        setPendingOverlays((prev: Overlay[]) => [
-          ...prev,
-          {
-            schedule_uuid: selectedOverlay.schedule_uuid,
-            schedule_timeslot_id: selectedOverlay.schedule_timeslot_id,
-            date: selectedOverlay.date,
-            name: myName!,
-            start: toLocalISOString(new Date(selectedOverlay.start)),
-            end: toLocalISOString(new Date(selectedOverlay.end)),
-          },
-        ]);
+        const newOverlay: Overlay = {
+          schedule_uuid: selectedOverlay.schedule_uuid,
+          schedule_timeslot_id: selectedOverlay.schedule_timeslot_id,
+          date: selectedOverlay.date,
+          name: myName ?? "未入力",
+          start: toLocalISOString(new Date(selectedOverlay.start)),
+          end: toLocalISOString(new Date(selectedOverlay.end)),
+        };
+
+        setPendingOverlays((prev: Overlay[]) => {
+          // 新しい Overlay を追加してマージ
+          const merged = mergeOverlays([...prev, newOverlay]);
+          return merged;
+        });
+
         setSelectedOverlay(null);
-        console.log("確定:", start, "→", end);
       }
     };
     window.addEventListener("mouseup", handleMouseUp);
