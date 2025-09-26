@@ -300,7 +300,6 @@ export const useUpdateAvailability = ({
       start: h.toISOString(),
       end: h.toISOString(),
     });
-    console.log("=== 開始時間 ===", h);
   };
 
   // セルにドラッグで入った時
