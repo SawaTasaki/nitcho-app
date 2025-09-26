@@ -1,3 +1,5 @@
+import type { Overlay } from "../../types/pages";
+
 /**
  * 指定した日付文字列 (YYYY-MM-DD) に n 日を加算した新しい日付文字列を返す関数
  */
@@ -114,4 +116,60 @@ export const intersectIntervals = (
     }
   }
   return res;
+};
+
+/**
+ * Overlay 配列を開始時刻順にソートし、重なり合う時間区間をマージして返す関数
+ *
+ * @param overlays - Overlay の配列
+ * @returns マージ後の Overlay 配列
+ *
+ * @example
+ * const input = [
+ *   { start: "2025-07-12T10:00:00", end: "2025-07-12T11:30:00" },
+ *   { start: "2025-07-12T11:00:00", end: "2025-07-12T12:00:00" },
+ * ];
+ * const result = mergeOverlays(input);
+ * // → [{ start: "2025-07-12T10:00:00", end: "2025-07-12T12:00:00" }]
+ */
+export const mergeOverlays = (overlays: Overlay[]): Overlay[] => {
+  if (overlays.length === 0) return [];
+
+  // start, end を Date に変換してソート
+  const sorted = overlays
+    .map((o) => ({
+      ...o,
+      start: new Date(o.start),
+      end: new Date(o.end),
+    }))
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  const result: Overlay[] = [];
+  let current = { ...sorted[0] };
+
+  for (let i = 1; i < sorted.length; i++) {
+    const next = sorted[i];
+    const currentEnd = current.end.getTime();
+    const nextStart = next.start.getTime();
+
+    if (nextStart <= currentEnd) {
+      // end を延長
+      current.end = new Date(Math.max(currentEnd, next.end.getTime()));
+    } else {
+      result.push({
+        ...current,
+        start: toLocalISOString(current.start),
+        end: toLocalISOString(current.end),
+      });
+      current = { ...next };
+    }
+  }
+
+  result.push({
+    ...current,
+    start: toLocalISOString(current.start),
+    end: toLocalISOString(current.end),
+  });
+
+  return result;
 };
