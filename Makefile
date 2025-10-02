@@ -4,8 +4,8 @@ export
 .PHONY: build-up up down clean postgresql react lint format fastapi
 
 build-up:
-	docker compose build
-	docker compose up -d
+	docker compose -f compose.dev.yaml build
+	docker compose -f compose.dev.yaml up -d
 	docker ps
 
 up:

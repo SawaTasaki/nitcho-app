@@ -1,0 +1,15 @@
+services:
+
+  fastapi:
+    image: 554347998452.dkr.ecr.ap-northeast-1.amazonaws.com/nitcho-app-fastapi:latest
+    container_name: fastapi
+    ports:
+      - "8000:80"
+    restart: always
+
+  react:
+    image: 554347998452.dkr.ecr.ap-northeast-1.amazonaws.com/nitcho-app-react:latest
+    container_name: react
+    ports:
+      - "5173:80" # React は Nginx 配信
+    restart: always
