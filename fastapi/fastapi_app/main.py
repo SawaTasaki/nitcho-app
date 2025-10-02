@@ -29,6 +29,11 @@ def get_db():
     finally:
         db.close()
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.post("/schedules", response_model=schemas.ScheduleReadWithScheduleTimeslots)
 def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
     return crud.create_schedule(db, schedule)
