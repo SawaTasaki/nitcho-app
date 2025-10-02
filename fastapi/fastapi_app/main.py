@@ -10,7 +10,7 @@ from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:5173")
 
