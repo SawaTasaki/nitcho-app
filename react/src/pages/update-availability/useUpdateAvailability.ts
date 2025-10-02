@@ -16,6 +16,7 @@ import {
   intersectIntervals,
   mergeOverlays,
 } from "@/utils/datetime";
+import { getEnv } from "@/utils/env";
 
 export const useUpdateAvailability = ({
   scheduleUuid,
@@ -42,8 +43,12 @@ export const useUpdateAvailability = ({
         setLoading(true);
         setError(null);
 
+        const backendOrigin = getEnv(
+          "VITE_BACKEND_ORIGIN",
+          "http://localhost:8000",
+        );
         const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules/${scheduleUuid}/with-availabilities`,
+          `${backendOrigin}/schedules/${scheduleUuid}/with-availabilities`,
         );
 
         if (!res.ok) {
@@ -171,16 +176,17 @@ export const useUpdateAvailability = ({
     };
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_ORIGIN}/availabilities`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        },
+      const backendOrigin = getEnv(
+        "VITE_BACKEND_ORIGIN",
+        "http://localhost:8000",
       );
+      const res = await fetch(`${backendOrigin}/availabilities`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!res.ok)
         throw new Error(
@@ -214,8 +220,12 @@ export const useUpdateAvailability = ({
     if (!confirmed) return;
 
     try {
+      const backendOrigin = getEnv(
+        "VITE_BACKEND_ORIGIN",
+        "http://localhost:8000",
+      );
       const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_ORIGIN}/availabilities/${availabilityId}?schedule_uuid=${scheduleUuid}`,
+        `${backendOrigin}/availabilities/${availabilityId}?schedule_uuid=${scheduleUuid}`,
         { method: "DELETE" },
       );
 

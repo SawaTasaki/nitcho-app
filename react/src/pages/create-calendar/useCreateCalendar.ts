@@ -7,6 +7,7 @@ import type {
   SavedScheduleResponse,
 } from "../../types/pages";
 import { addDays, isTimeOrderValid, toDateTimeString } from "@/utils/datetime";
+import { getEnv } from "@/utils/env";
 
 export const useCreateCalendar = ({
   onCreateCalendarSuccess,
@@ -52,7 +53,12 @@ export const useCreateCalendar = ({
   ): Promise<SavedScheduleResponse> => {
     const payload = { title, timeslots };
 
-    const endpoint = `${import.meta.env.VITE_BACKEND_ORIGIN}/schedules`;
+    const backendOrigin = getEnv(
+      "VITE_BACKEND_ORIGIN",
+      "http://localhost:8000",
+    );
+
+    const endpoint = `${backendOrigin}/schedules`;
 
     const res = await fetch(endpoint, {
       method: "POST",
