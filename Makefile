@@ -9,10 +9,10 @@ build-up:
 	docker ps
 
 up:
-	docker compose up -d
+	docker compose -f compose.dev.yaml up -d
 
 down:
-	docker compose down
+	docker compose -f compose.dev.yaml down
 
 clean:
 	docker system df
