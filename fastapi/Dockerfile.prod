@@ -3,13 +3,12 @@ FROM python:3.12-slim
 # 作業ディレクトリ
 WORKDIR /app
 
-# Poetry / pipenv じゃなく requirements.txt 前提
-COPY ./requirements.txt /app/requirements.txt
+# 依存パッケージのインストール
+COPY ./fastapi/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-# アプリ本体
-COPY ./fastapi_app /app/fastapi_app
+# FastAPI アプリ本体のコピー
+COPY ./fastapi/fastapi_app /app/fastapi_app
 
-# uvicorn 単体でもOKだが、Gunicorn経由が安定
-# ECS なら複数タスクでスケールするので、worker数は控えめでOK
+# Gunicorn + Uvicorn Worker で実行
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "fastapi_app.main:app", "--bind", "0.0.0.0:80", "--workers", "2"]
