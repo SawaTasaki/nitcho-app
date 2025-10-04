@@ -1,0 +1,88 @@
+on:
+  push:
+    branches:
+      - main  # mainブランチにpushされたときのみ発火
+
+name: Deploy to Staging
+
+jobs:
+  upload-fastapi-and-react:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # FastAPI (Backend)
+      - name: Build and Push FastAPI image
+        id: build-fastapi
+        env:
+          ECR_REPOSITORY_FASTAPI: ${{ secrets.ECR_REPOSITORY_FASTAPI }}
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${ECR_REPOSITORY_FASTAPI}:latest \
+            -f fastapi/Dockerfile.prod \
+            --push \
+            .
+
+      # React (Frontend)
+      - name: Build and Push React image
+        id: build-react
+        env:
+          ECR_REPOSITORY_REACT: ${{ secrets.ECR_REPOSITORY_REACT }}
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${ECR_REPOSITORY_REACT}:latest \
+            -f react/Dockerfile.prod \
+            --push \
+            .
+
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    needs:
+      - upload-fastapi-and-react
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+
+      - name: Update ECS Services (FastAPI & React)
+        env:
+          CLUSTER_NAME: ${{ secrets.ECS_CLUSTER_NAME }}
+          FASTAPI_SERVICE: ${{ secrets.ECS_SERVICE_FASTAPI }}
+          REACT_SERVICE: ${{ secrets.ECS_SERVICE_REACT }}
+        run: |
+          echo "🚀 Updating FastAPI service..."
+          aws ecs update-service \
+            --cluster ${CLUSTER_NAME} \
+            --service ${FASTAPI_SERVICE} \
+            --force-new-deployment
+
+          echo "🚀 Updating React service..."
+          aws ecs update-service \
+            --cluster ${CLUSTER_NAME} \
+            --service ${REACT_SERVICE} \
+            --force-new-deployment
