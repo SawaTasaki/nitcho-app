@@ -1,18 +1,11 @@
 on:
   push:
     branches:
-      - main  # mainブランチにpushされたときのみ発火
+      - main
 
 name: Deploy to Staging
 
-# 共通の設定をアンカーとして定義
-x-common-job: &common-job
-  runs-on: ubuntu-latest
-  permissions:
-    id-token: write
-    contents: read
-
-x-aws-credentials-step: &aws-credentials
+aws-credentials-step: &aws-credentials
   - name: Configure AWS credentials
     uses: aws-actions/configure-aws-credentials@v4
     with:
@@ -21,10 +14,13 @@ x-aws-credentials-step: &aws-credentials
 
 jobs:
   upload-fastapi-and-react:
-    <<: *common-job  # 共通設定を展開
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      - *aws-credentials  # AWS認証ステップを展開
+      - *aws-credentials
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -33,7 +29,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # FastAPI (Backend)
       - name: Build and Push FastAPI image
         id: build-fastapi
         env:
@@ -46,7 +41,6 @@ jobs:
             --push \
             .
 
-      # React (Frontend)
       - name: Build and Push React image
         id: build-react
         env:
@@ -60,12 +54,15 @@ jobs:
             .
 
   deploy:
-    <<: *common-job  # 共通設定を展開
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     needs:
       - upload-fastapi-and-react
     steps:
       - uses: actions/checkout@v4
-      - *aws-credentials  # AWS認証ステップを展開
+      - *aws-credentials
 
       - name: Update ECS Services (FastAPI & React)
         env:
