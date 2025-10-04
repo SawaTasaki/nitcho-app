@@ -5,13 +5,6 @@ on:
 
 name: Deploy to Staging
 
-aws-credentials-step: &aws-credentials
-  - name: Configure AWS credentials
-    uses: aws-actions/configure-aws-credentials@v4
-    with:
-      aws-region: ap-northeast-1
-      role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
-
 jobs:
   upload-fastapi-and-react:
     runs-on: ubuntu-latest
@@ -19,8 +12,15 @@ jobs:
       id-token: write
       contents: read
     steps:
+      # ✅ ここでアンカーを定義する
+      - &aws-credentials
+        name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+
       - uses: actions/checkout@v4
-      - *aws-credentials
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -62,6 +62,8 @@ jobs:
       - upload-fastapi-and-react
     steps:
       - uses: actions/checkout@v4
+
+      # ✅ ここでアンカーを呼び出す
       - *aws-credentials
 
       - name: Update ECS Services (FastAPI & React)
