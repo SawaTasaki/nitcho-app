@@ -16,7 +16,7 @@ export function AppContainer() {
   return (
     <div className="app-container">
       <Header
-        title="日程調整マン"
+        title="日程調整📝"
         onClickTitle={() => {
           window.location.href = "/";
         }}
