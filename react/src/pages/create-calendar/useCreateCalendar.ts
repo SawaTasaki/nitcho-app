@@ -60,6 +60,8 @@ export const useCreateCalendar = ({
 
     const endpoint = `${backendOrigin}/schedules`;
 
+    console.log("環境変数が HTTPS になっているかどうかをテスト: ", import.meta.env.VITE_BACKEND_ORIGIN)
+
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
