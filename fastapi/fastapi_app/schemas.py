@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import List
-from uuid import UUID
 
 class ORMBase(BaseModel):
     model_config = {"from_attributes": True}
@@ -31,7 +30,7 @@ class ScheduleCreate(ScheduleBase):
 
 
 class ScheduleReadWithScheduleTimeslots(ORMBase):
-    uuid: UUID
+    uuid: str
     title: str
     created_at: datetime
     updated_at: datetime
@@ -39,7 +38,7 @@ class ScheduleReadWithScheduleTimeslots(ORMBase):
 
 
 class ScheduleReadWithAvailabilities(ORMBase):
-    uuid: UUID
+    uuid: str
     title: str
     created_at: datetime
     updated_at: datetime
@@ -68,13 +67,13 @@ class AvailabilityBase(BaseModel):
 
 
 class AvailabilityCreate(AvailabilityBase):
-    schedule_uuid: UUID
+    schedule_uuid: str
     timeslots: List[AvailabilityTimeslotCreate]
 
 
 class AvailabilityReadWithAvailabilityTimeslots(ORMBase):
     id: int
-    schedule_uuid: UUID
+    schedule_uuid: str
     guest_user_name: str
     created_at: datetime
     updated_at: datetime
