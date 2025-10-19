@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
-from . import models, schemas
+# from . import models, schemas
+import models, schemas
 
 def create_schedule(db: Session, schedule: schemas.ScheduleCreate):
     try:
