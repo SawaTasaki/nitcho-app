@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
-from uuid import UUID
 from . import models, schemas
 
 def create_schedule(db: Session, schedule: schemas.ScheduleCreate):
@@ -85,7 +84,7 @@ def get_schedule_with_availabilities(db: Session, schedule_uuid):
     return result
 
 
-def delete_availability_with_schedule(db: Session, availability_id: int, schedule_uuid: UUID):
+def delete_availability_with_schedule(db: Session, availability_id: int, schedule_uuid: str):
     try:
         availability = (
             db.query(models.Availability)

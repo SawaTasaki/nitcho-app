@@ -1,43 +1,62 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 -- スケジュール本体
 CREATE TABLE IF NOT EXISTS schedules (
-    uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title VARCHAR NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    uuid CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- スケジュールのタイムスロット
 CREATE TABLE IF NOT EXISTS schedule_timeslots (
-    id SERIAL PRIMARY KEY,
-    schedule_uuid UUID NOT NULL REFERENCES schedules(uuid) ON DELETE CASCADE,
-    start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    schedule_uuid CHAR(36) NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_schedule_uuid (schedule_uuid),
+    CONSTRAINT fk_schedule_timeslots_schedule
+        FOREIGN KEY (schedule_uuid)
+        REFERENCES schedules(uuid)
+        ON DELETE CASCADE
 );
 
 -- スケジュールに対する参加者の可用性
 CREATE TABLE IF NOT EXISTS availabilities (
-    id SERIAL PRIMARY KEY,
-    schedule_uuid UUID NOT NULL REFERENCES schedules(uuid) ON DELETE CASCADE,
-    guest_user_name VARCHAR NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    schedule_uuid CHAR(36) NOT NULL,
+    guest_user_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_schedule_uuid (schedule_uuid),
+    CONSTRAINT fk_availabilities_schedule
+        FOREIGN KEY (schedule_uuid)
+        REFERENCES schedules(uuid)
+        ON DELETE CASCADE
 );
 
 -- 可用性のタイムスロット
 CREATE TABLE IF NOT EXISTS availability_timeslots (
-    id SERIAL PRIMARY KEY,
-    availability_id INTEGER NOT NULL REFERENCES availabilities(id) ON DELETE CASCADE,
-    schedule_timeslot_id INTEGER NOT NULL REFERENCES schedule_timeslots(id) ON DELETE CASCADE,
-    start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    availability_id INT NOT NULL,
+    schedule_timeslot_id INT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_availability_id (availability_id),
+    INDEX idx_schedule_timeslot_id (schedule_timeslot_id),
+    CONSTRAINT fk_availability_timeslots_availability
+        FOREIGN KEY (availability_id)
+        REFERENCES availabilities(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_availability_timeslots_schedule_timeslot
+        FOREIGN KEY (schedule_timeslot_id)
+        REFERENCES schedule_timeslots(id)
+        ON DELETE CASCADE
 );
 
+-- データ投入
 INSERT INTO schedules (uuid, title)
 VALUES ('11111111-2222-3333-4444-555555555555', 'テスト用スケジュール');
 

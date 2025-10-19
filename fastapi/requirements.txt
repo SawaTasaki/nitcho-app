@@ -1,6 +1,9 @@
 fastapi[standard]>=0.113.0,<0.114.0
-uvicorn[standard]>=0.27.0,<0.28.0
+# uvicorn[standard]>=0.27.0,<0.28.0 FastCGI使用のため不要
 SQLAlchemy>=2.0.0
-psycopg2-binary
+# psycopg2-binary 削除（PostgreSQL用のため不要）
 python-dotenv
-gunicorn
+# gunicorn 常駐プロセス不可なので不要
+a2wsgi
+flup
+PyMySQL>=1.1.0
