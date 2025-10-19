@@ -2,6 +2,7 @@
 .DS_Store
 
 react/node_modules/
+react/dist
 
 fastapi/__pycache__
 fastapi/fastapi_app/__pycache__/
